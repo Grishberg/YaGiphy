@@ -1,0 +1,1 @@
+Entity declarations and common project interfaces.

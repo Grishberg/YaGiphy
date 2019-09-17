@@ -1,0 +1,9 @@
+include ':app', ':core',
+        ':feature_gimphy_gateway',
+        ':feature_images_list',
+        ':feature_content_details',
+        ':feature_content_details_domain',
+        ':feature_content_details_presentation',
+        ':feature_images_list_presentation',
+        ':feature_giphy_gateway',
+        ':feature_images_list_domain'

@@ -1,0 +1,1 @@
+Public interfaces for content details use cases

@@ -1,0 +1,1 @@
+Public interfaces for images list domain.
