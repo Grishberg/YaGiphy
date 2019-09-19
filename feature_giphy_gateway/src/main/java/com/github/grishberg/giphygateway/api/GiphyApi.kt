@@ -10,7 +10,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 
 
-private val TREND_ENDPOINT = "api.giphy.com/v1/gifs/trending"
+private const val TREND_ENDPOINT = "api.giphy.com/v1/gifs/trending"
 
 @WorkerThread
 class GiphyApi(

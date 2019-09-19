@@ -7,13 +7,16 @@ import com.github.grishberg.core.Card
 import com.github.grishberg.core.CardImageGateway
 import com.github.grishberg.core.GetImageDelegate
 import com.github.grishberg.giphygateway.api.ImageDownloader
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
 /**
  * Or just use Picasso library.
  */
 class CardsLruImageRepository(
+    private val uiScope: CoroutineScope,
     private val imageDownloader: ImageDownloader,
     private val lruCache: LruCache<String, Bitmap>
 ) : CardImageGateway, GetImageDelegate {
@@ -31,15 +34,19 @@ class CardsLruImageRepository(
             return
         }
 
-        // request in another thread
-        imageDownloader.downloadImage(url)
+        downloadImageFromNetwork(card, imageId, url)
     }
 
-    private suspend fun requestImage() : Bitmap? {
-        withContext(Dispatchers.IO) {              // Dispatchers.IO (main-safety block)
-            /* perform network IO here */          // Dispatchers.IO (main-safety block)
+    private fun downloadImageFromNetwork(card: Card, imageId: String, url: String) =
+        uiScope.launch {
+            val task = async(Dispatchers.IO) {
+                // background thread
+                imageDownloader.downloadImage(url)
+            }
+            val bitmap = task.await()
+            lruCache.put(imageId, bitmap)
+            notifyCardImageReceived(card)
         }
-    }
 
     override fun registerImageReadyAction(action: CardImageGateway.ImageReadyAction) {
         actions.add(action)
@@ -61,10 +68,14 @@ class CardsLruImageRepository(
          * @param memClass = view.getMemoryClassFromActivity()
          * @param imageDownloader network image repository
          */
-        fun create(memClass: Int, imageDownloader: ImageDownloader): CardImageGateway {
+        fun create(
+            uiScope: CoroutineScope,
+            memClass: Int,
+            imageDownloader: ImageDownloader
+        ): CardImageGateway {
             val cacheSize = 1024 * 1024 * memClass / 8
             val bitmapCache = LruCache<String, Bitmap>(cacheSize)
-            return CardsLruImageRepository(imageDownloader, bitmapCache)
+            return CardsLruImageRepository(uiScope, imageDownloader, bitmapCache)
         }
     }
 }
