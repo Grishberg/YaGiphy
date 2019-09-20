@@ -11,7 +11,7 @@ interface ContentDetailsOutput {
     /**
      * Is called when image for card received.
      */
-    fun updateCardImage(card: Card)
+    fun updateCardImage(card: Card<*>)
 
     /**
      * Is called when error happens.

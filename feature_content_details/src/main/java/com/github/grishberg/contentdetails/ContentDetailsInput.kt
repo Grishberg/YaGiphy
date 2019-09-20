@@ -15,7 +15,7 @@ interface ContentDetailsInput {
         fun onContentReceiveError(message: String)
     }
 
-    fun requestContentDetails(selectedCard: Card)
+    fun requestContentDetails(selectedCard: Card<*>)
     fun registerContentReceivedAction(action: ContentDetailsReceivedAction)
     fun unregisterContentReceivedAction(action: ContentDetailsReceivedAction)
 }

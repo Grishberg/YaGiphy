@@ -22,11 +22,11 @@ class CardsLruImageRepository(
 ) : CardImageGateway, GetImageDelegate {
     private val actions = mutableListOf<CardImageGateway.ImageReadyAction>()
 
-    override fun requestImageForCard(card: Card) {
+    override fun requestImageForCard(card: Card<*>) {
         card.requestImage(this)
     }
 
-    override fun getImageByUrl(card: Card, imageId: String, url: String) {
+    override fun getImageByUrl(card: Card<*>, imageId: String, url: String) {
         // 1) check from cache
         val bitmapFromCache = lruCache.get(imageId)
         if (bitmapFromCache != null) {
@@ -37,7 +37,7 @@ class CardsLruImageRepository(
         downloadImageFromNetwork(card, imageId, url)
     }
 
-    private fun downloadImageFromNetwork(card: Card, imageId: String, url: String) =
+    private fun downloadImageFromNetwork(card: Card<*>, imageId: String, url: String) =
         uiScope.launch {
             val task = async(Dispatchers.IO) {
                 // background thread
@@ -57,7 +57,7 @@ class CardsLruImageRepository(
     }
 
     @MainThread
-    private fun notifyCardImageReceived(card: Card) {
+    private fun notifyCardImageReceived(card: Card<*>) {
         for (action in actions) {
             action.onImageReadyForCard(card)
         }

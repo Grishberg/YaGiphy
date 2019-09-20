@@ -4,12 +4,13 @@ import android.graphics.Bitmap
 import android.view.View
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
+import com.github.grishberg.core.CardRenderer
 import com.github.grishberg.imageslistpresentation.R
 
-class CardViewHolder(rootView: View) : RecyclerView.ViewHolder(rootView) {
+internal class CardViewHolder(rootView: View) : RecyclerView.ViewHolder(rootView), CardRenderer {
     val image = rootView.findViewById<ImageView>(R.id.cardImage)
 
-    fun showDefaultBackgroun() {
+    fun showDefaultBackground() {
         image.setImageResource(R.drawable.ic_image_placeholder)
     }
 

@@ -15,7 +15,7 @@ class ContentDetailsUseCase(
         imageGateway.registerImageReadyAction(this)
     }
 
-    override fun onContentDetailsCardSelected(card: Card) {
+    override fun onContentDetailsCardSelected(card: Card<*>) {
         input.requestContentDetails(card)
     }
 
@@ -23,7 +23,7 @@ class ContentDetailsUseCase(
         output.showContentDetails(content)
     }
 
-    override fun onImageReadyForCard(targetCard: Card) {
+    override fun onImageReadyForCard(targetCard: Card<*>) {
         output.updateCardImage(targetCard)
     }
 
