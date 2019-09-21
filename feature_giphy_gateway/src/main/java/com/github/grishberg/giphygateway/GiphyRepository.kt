@@ -14,7 +14,7 @@ class GiphyRepository : CardImageGateway {
         actions.add(action)
     }
 
-    override fun unreqisterImageReadyAction(action: CardImageGateway.ImageReadyAction) {
+    override fun unregisterImageReadyAction(action: CardImageGateway.ImageReadyAction) {
         actions.remove(action)
     }
 }

@@ -1,11 +1,13 @@
 package com.github.grishberg.imageslist
 
-import com.github.grishberg.core.Card
+import android.graphics.Bitmap
+import com.github.grishberg.core.AnyCard
 
 interface CardsList {
     fun requestCardsFirstPage()
     fun requestNextPage()
-    fun onCardSelected(selectedCard: Card<*>)
+    fun onCardSelected(selectedCard: AnyCard)
+    fun requestImageForCard(shownCard: AnyCard): Bitmap
     fun registerOutput(output: CardsListOutput)
     fun unregisterOutput(output: CardsListOutput)
 }

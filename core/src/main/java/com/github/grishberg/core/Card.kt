@@ -1,10 +1,9 @@
 package com.github.grishberg.core
 
-import android.graphics.Bitmap
+typealias AnyCard = Card<*>
 
 interface Card<R : CardRenderer> {
     fun requestImage(delegate: GetImageDelegate)
     fun render(renderer: R)
-    fun isContentTheSame(card: Card<*>): Boolean
-    fun updateBitmap(bitmap: Bitmap)
+    fun isContentTheSame(card: AnyCard): Boolean
 }
