@@ -9,30 +9,71 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.github.grishberg.core.Card
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.github.grishberg.core.AnyCard
 import com.github.grishberg.imageslist.CardsList
 import com.github.grishberg.imageslistpresentation.rv.CardsAdapter
 
+/***
+ * Facade for vertical card list view.
+ */
 class ImagesListFacade(
     private val cardsList: CardsList
 ) {
+    /**
+     * Creates vertical list view and attaches to {@param parent}
+     */
     fun attachToParent(activity: FragmentActivity, parent: ViewGroup) {
         val viewModel = ViewModelProviders
             .of(activity, ViewModelFactory(cardsList))
             .get(ImagesListViewModel::class.java)
 
         val adapter = CardsAdapter(LayoutInflater.from(activity))
-        val rv = RecyclerView(activity)
-        rv.adapter = adapter
-        rv.layoutManager = LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
-        parent.addView(rv)
+        val refreshLayout = createRefreshLayout(activity)
 
-        viewModel.cards.observe(activity, Observer<List<Card<*>>> { cards ->
+        val layoutManager = LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
+        val rv = createRecyclerView(activity, adapter, layoutManager, refreshLayout)
+        parent.addView(refreshLayout)
+
+        viewModel.cards.observe(activity, Observer<List<AnyCard>> { cards ->
             adapter.populate(cards)
+            refreshLayout.isRefreshing = false
+        })
+
+        viewModel.updatedCardPosition.observe(activity, Observer<Int> { updatedItemPosition ->
+            adapter.notifyItemChanged(updatedItemPosition)
+        })
+        rv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                val lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
+                cardsList.onScrollStateChanged(lastVisibleItemPosition)
+            }
         })
     }
 
-    @SuppressWarnings("unchecked")
+    private fun createRecyclerView(
+        activity: FragmentActivity,
+        adapter: CardsAdapter,
+        layoutManager: LinearLayoutManager,
+        refreshLayout: SwipeRefreshLayout
+    ): RecyclerView {
+        val rv = RecyclerView(activity)
+        rv.adapter = adapter
+        rv.layoutManager = layoutManager
+        refreshLayout.addView(rv)
+        return rv
+    }
+
+    private fun createRefreshLayout(activity: FragmentActivity): SwipeRefreshLayout {
+        val refreshLayout = SwipeRefreshLayout(activity)
+        refreshLayout.setOnRefreshListener {
+            cardsList.requestCardsFirstPage()
+        }
+        return refreshLayout
+    }
+
+    @Suppress("UNCHECKED_CAST")
     private class ViewModelFactory(
         private val cardsList: CardsList
     ) : ViewModelProvider.Factory {

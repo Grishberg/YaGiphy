@@ -5,9 +5,12 @@ import com.github.grishberg.core.AnyCard
 
 interface CardsList {
     fun requestCardsFirstPage()
-    fun requestNextPage()
-    fun onCardSelected(selectedCard: AnyCard)
-    fun requestImageForCard(shownCard: AnyCard): Bitmap
+    fun onCardSelected(selectedCardUrl: String)
+    fun requestImageByCard(shownCard: AnyCard): Bitmap?
     fun registerOutput(output: CardsListOutput)
     fun unregisterOutput(output: CardsListOutput)
+    /**
+     * Is called when card list scrolled.
+     */
+    fun onScrollStateChanged(lastVisibleItemPosition: Int)
 }

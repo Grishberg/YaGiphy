@@ -24,29 +24,32 @@ class CardsLruImageRepository(
 ) : CardImageGateway, GetImageDelegate {
     private val actions = mutableListOf<CardImageGateway.ImageReadyAction>()
 
-    override fun requestImageForCard(card: AnyCard): Bitmap {
-        card.requestImage(this)
+    override fun requestImageForCard(card: AnyCard): Bitmap? {
+        return card.requestImage(this)
     }
 
-    override fun getImageByUrl(card: Card<*>, imageId: String, url: String) {
+    override fun getImageByUrl(card: Card<*>, url: String): Bitmap? {
         // 1) check from cache
-        val bitmapFromCache = lruCache.get(imageId)
+        val bitmapFromCache = lruCache.get(url)
         if (bitmapFromCache != null) {
-            return
+            return bitmapFromCache
         }
 
-        downloadImageFromNetwork(card, imageId, url)
+        downloadImageFromNetwork(card, url)
+        return null
     }
 
-    private fun downloadImageFromNetwork(card: Card<*>, imageId: String, url: String) =
+    private fun downloadImageFromNetwork(card: AnyCard, url: String) =
         uiScope.launch {
             val task = async(Dispatchers.IO) {
                 // background thread
                 imageDownloader.downloadImage(url)
             }
             val bitmap = task.await()
-            lruCache.put(imageId, bitmap)
-            notifyCardImageReceived(card)
+            if (bitmap != null) {
+                lruCache.put(url, bitmap)
+                notifyCardImageReceived(card)
+            }
         }
 
     override fun registerImageReadyAction(action: CardImageGateway.ImageReadyAction) {
@@ -66,14 +69,15 @@ class CardsLruImageRepository(
 
     companion object {
         /**
+         * @param uiScope CoroutineScope for controlling coroutines.
          * @param memClass = view.getMemoryClassFromActivity()
          * @param okHttpClient OkHttpClient instance
          */
         fun create(
             uiScope: CoroutineScope,
-            memClass: Int,
-            okHttpClient: OkHttpClient = OkHttpClient()
+            memClass: Int
         ): CardImageGateway {
+            val okHttpClient = OkHttpClient()
             val imageDownloader = ImageDownloader(okHttpClient)
             val cacheSize = 1024 * 1024 * memClass / 8
             val bitmapCache = LruCache<String, Bitmap>(cacheSize)

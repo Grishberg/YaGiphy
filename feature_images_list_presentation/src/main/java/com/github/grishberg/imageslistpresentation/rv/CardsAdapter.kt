@@ -4,16 +4,16 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.github.grishberg.core.Card
+import com.github.grishberg.core.AnyCard
 import com.github.grishberg.imageslistpresentation.R
 import com.github.grishberg.imageslistpresentation.VerticalListCard
 
 internal class CardsAdapter(
     private val inflater: LayoutInflater
 ) : RecyclerView.Adapter<CardViewHolder>() {
-    private val items = mutableListOf<Card<*>>()
+    private val items = mutableListOf<AnyCard>()
 
-    fun populate(cards: List<Card<*>>) {
+    fun populate(cards: List<AnyCard>) {
         DiffUtil.calculateDiff(DiffUtilCallback(items, cards))
             .dispatchUpdatesTo(this)
         items.clear()
@@ -26,7 +26,7 @@ internal class CardsAdapter(
         view.setOnClickListener {
             val pos = vh.adapterPosition
             if (pos != RecyclerView.NO_POSITION) {
-                //TODO: handle click
+                (items[pos] as VerticalListCard).handleClick()
             }
         }
         return vh
@@ -34,6 +34,10 @@ internal class CardsAdapter(
 
     override fun onBindViewHolder(holder: CardViewHolder, position: Int) {
         (items[position] as VerticalListCard).render(holder)
+    }
+
+    override fun onViewDetachedFromWindow(holder: CardViewHolder) {
+        holder.clearAnimation()
     }
 
     override fun getItemCount(): Int = items.size

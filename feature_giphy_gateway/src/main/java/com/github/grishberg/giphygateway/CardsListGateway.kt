@@ -1,8 +1,8 @@
 package com.github.grishberg.giphygateway
 
-import com.github.grishberg.core.Card
-import com.github.grishberg.core.CardFactory
+import com.github.grishberg.core.AnyCard
 import com.github.grishberg.giphygateway.api.GiphyApi
+import com.github.grishberg.imageslist.CardFactory
 import com.github.grishberg.imageslist.CardsListInput
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -16,8 +16,12 @@ class CardsListGateway(
 ) : CardsListInput {
     private val actions = mutableListOf<CardsListInput.CardsReceivedAction>()
 
-    constructor(uiScope: CoroutineScope, cardFactory: CardFactory, apiKey: String) :
-            this(uiScope, GiphyApi(apiKey, OkHttpClient(), cardFactory))
+    constructor(uiScope: CoroutineScope, apiKey: String) :
+            this(uiScope, GiphyApi(apiKey, OkHttpClient()))
+
+    fun setCardFactory(cardFactory: CardFactory) {
+        giphyApi.cardFactory = cardFactory
+    }
 
     override fun requestTopCards(offset: Int) {
         uiScope.launch {
@@ -38,7 +42,7 @@ class CardsListGateway(
         actions.add(action)
     }
 
-    private fun notifyCardListReceived(cards: List<Card<*>>) {
+    private fun notifyCardListReceived(cards: List<AnyCard>) {
         for (action in actions) {
             action.onCardsReceived(cards)
         }

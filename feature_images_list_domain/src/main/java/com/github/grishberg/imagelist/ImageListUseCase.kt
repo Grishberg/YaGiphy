@@ -14,32 +14,32 @@ class ImageListUseCase(
     private val outputs = mutableListOf<CardsListOutput>()
     private var pageOffset = 0
     private val cardsList = mutableListOf<AnyCard>()
+    private var isLoading: Boolean = false
 
     init {
         input.registerCardsReceivedAction(this)
         imagesInput.registerImageReadyAction(this)
     }
 
-    override fun onCardSelected(selectedCard: AnyCard) {
-        //TODO: show card.
+    override fun onCardSelected(selectedCardUrl: String) {
+
     }
 
-    override fun requestImageForCard(shownCard: AnyCard): Bitmap =
+    override fun requestImageByCard(shownCard: AnyCard): Bitmap? =
         imagesInput.requestImageForCard(shownCard)
 
     override fun requestCardsFirstPage() {
+        cardsList.clear()
         input.requestTopCards(0)
         pageOffset++
     }
 
-    override fun requestNextPage() {
-        input.requestTopCards(pageOffset++)
-    }
-
     override fun onCardsReceived(cardsPage: List<AnyCard>) {
+        isLoading = false
         for (card in cardsPage) {
             imagesInput.requestImageForCard(card)
         }
+        cardsList.addAll(cardsPage)
         for (output in outputs) {
             output.updateCards(cardsList)
         }
@@ -50,8 +50,25 @@ class ImageListUseCase(
     }
 
     override fun onImageReadyForCard(targetCard: AnyCard) {
+        val targetItemPos = findCardPosition(targetCard)
+        if (targetItemPos < 0) {
+            return
+        }
         for (output in outputs) {
-            output.updateCardImage(targetCard)
+            output.updateCardByPosition(targetItemPos)
+        }
+    }
+
+    private fun findCardPosition(targetCard: AnyCard): Int = cardsList.lastIndexOf(targetCard)
+
+    override fun onScrollStateChanged(lastVisibleItemPosition: Int) {
+        if (isLoading) {
+            return
+        }
+
+        if (lastVisibleItemPosition == cardsList.size - 1) {
+            isLoading = true
+            input.requestTopCards(cardsList.size)
         }
     }
 

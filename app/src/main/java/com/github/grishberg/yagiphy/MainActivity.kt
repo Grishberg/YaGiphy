@@ -12,7 +12,6 @@ import com.github.grishberg.imageslist.CardsList
 import com.github.grishberg.imageslistpresentation.ImagesListFacade
 import com.github.grishberg.imageslistpresentation.VerticalCardFactory
 import com.github.grishberg.yagiphy.BuildConfig.API_KEY
-import sun.jvm.hotspot.utilities.IntArray
 
 
 class MainActivity : AppCompatActivity() {
@@ -27,12 +26,15 @@ class MainActivity : AppCompatActivity() {
 
         val content = findViewById<ViewGroup>(R.id.content)
 
-        val cardFactory = VerticalCardFactory()
-        val cardListInput = CardsListGateway(uiScope, cardFactory, API_KEY)
+        val cardListInput = CardsListGateway(uiScope, API_KEY)
 
         val memClass = getMemoryClassFromActivity()
         val imagesGateway = CardsLruImageRepository.create(uiScope, memClass)
         cardList = ImageListUseCase(cardListInput, imagesGateway)
+
+        val cardFactory = VerticalCardFactory(cardList)
+        cardListInput.setCardFactory(cardFactory)
+
         imagesListFacade = ImagesListFacade(cardList)
         imagesListFacade.attachToParent(this, content)
         cardList.requestCardsFirstPage()

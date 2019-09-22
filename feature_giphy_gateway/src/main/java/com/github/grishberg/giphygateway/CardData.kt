@@ -13,7 +13,7 @@ data class CardData(
     val url: String,
     val username: String,
     val title: String,
-    val image: Images
+    val images: Images
 )
 
 data class Images(

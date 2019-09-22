@@ -10,7 +10,7 @@ interface CardImageGateway {
         fun onImageReadyForCard(targetCard: AnyCard)
     }
 
-    fun requestImageForCard(card: AnyCard): Bitmap
+    fun requestImageForCard(card: AnyCard): Bitmap?
     fun registerImageReadyAction(action: ImageReadyAction)
     fun unregisterImageReadyAction(action: ImageReadyAction)
 }

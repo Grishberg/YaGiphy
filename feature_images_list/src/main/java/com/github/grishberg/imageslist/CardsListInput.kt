@@ -1,10 +1,10 @@
 package com.github.grishberg.imageslist
 
-import com.github.grishberg.core.Card
+import com.github.grishberg.core.AnyCard
 
 interface CardsListInput {
     interface CardsReceivedAction {
-        fun onCardsReceived(cards: List<Card<*>>)
+        fun onCardsReceived(cardsPage: List<AnyCard>)
         fun onError(message: String)
     }
 
