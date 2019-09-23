@@ -3,7 +3,6 @@ package com.github.grishberg.imageslistpresentation
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.github.grishberg.core.AnyCard
 import com.github.grishberg.core.Card
 import com.github.grishberg.core.SingleLiveEvent
 import com.github.grishberg.imageslist.CardsList
@@ -13,8 +12,8 @@ class ImagesListViewModel(
     private val cardsList: CardsList
 ) : ViewModel(), CardsListOutput {
 
-    private val _cards = MutableLiveData<List<AnyCard>>()
-    val cards: LiveData<List<AnyCard>>
+    private val _cards = MutableLiveData<List<Card>>()
+    val cards: LiveData<List<Card>>
         get() = _cards
 
     private val _updatedItemPosition = MutableLiveData<Int>()
@@ -29,7 +28,7 @@ class ImagesListViewModel(
         cardsList.registerOutput(this)
     }
 
-    override fun updateCards(cards: List<Card<*>>) {
+    override fun updateCards(cards: List<Card>) {
         _cards.value = cards
     }
 

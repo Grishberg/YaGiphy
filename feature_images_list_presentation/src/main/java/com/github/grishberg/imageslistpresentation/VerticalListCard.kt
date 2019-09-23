@@ -1,12 +1,9 @@
 package com.github.grishberg.imageslistpresentation
 
 import android.graphics.Bitmap
-import com.github.grishberg.contentdetails.ContentDetailsFactory
-import com.github.grishberg.core.AnyCard
 import com.github.grishberg.core.Card
-import com.github.grishberg.core.Content
+import com.github.grishberg.core.CardRenderer
 import com.github.grishberg.imageslist.CardsList
-import com.github.grishberg.imageslistpresentation.rv.CardViewHolder
 
 /**
  * Abstraction of list item (not DTO).
@@ -17,15 +14,14 @@ internal class VerticalListCard(
     private val url: String,
     override val imageUrl: String,
     private val userName: String,
-    private val cardsList: CardsList,
-    private val contentDetailsFactory: ContentDetailsFactory
-) : Card<CardViewHolder> {
+    private val cardsList: CardsList
+) : Card {
     private var hasImage = false
 
     override val twitterUserName: String
         get() = userName
 
-    override fun render(renderer: CardViewHolder) {
+    override fun render(renderer: CardRenderer) {
         val bitmap: Bitmap? = cardsList.requestImageByCard(this)
         if (bitmap == null) {
             renderer.showDefaultBackground()
@@ -44,13 +40,7 @@ internal class VerticalListCard(
         cardsList.onCardSelected(this)
     }
 
-    override fun createContent(twitterValid: Boolean): Content =
-        contentDetailsFactory.createContent(
-            this, url, userName,
-            if (twitterValid) userName else null
-        )
-
-    override fun isContentTheSame(card: AnyCard): Boolean {
+    override fun isContentTheSame(card: Card): Boolean {
         if (card !is VerticalListCard) {
             return false
         }

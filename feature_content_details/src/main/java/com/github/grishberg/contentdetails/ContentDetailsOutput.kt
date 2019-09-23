@@ -1,12 +1,17 @@
 package com.github.grishberg.contentdetails
 
-import com.github.grishberg.core.Content
+import com.github.grishberg.core.Card
 
 interface ContentDetailsOutput {
     /**
      * Is called when content details is ready.
      */
-    fun showContentDetails(content: Content)
+    fun showTwitterHashTag(tag: TwitterHashTag)
+
+    /**
+     * Is call when user clicked to card.
+     */
+    fun showCardDetails(card: Card)
 
     /**
      * Is called when image for card received.

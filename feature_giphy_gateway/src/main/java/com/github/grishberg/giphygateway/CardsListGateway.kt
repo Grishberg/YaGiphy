@@ -1,6 +1,6 @@
 package com.github.grishberg.giphygateway
 
-import com.github.grishberg.core.AnyCard
+import com.github.grishberg.core.Card
 import com.github.grishberg.giphygateway.api.GiphyApi
 import com.github.grishberg.imageslist.CardFactory
 import com.github.grishberg.imageslist.CardsListInput
@@ -44,7 +44,7 @@ class CardsListGateway(
         actions.add(action)
     }
 
-    private fun notifyCardListReceived(cards: List<AnyCard>) {
+    private fun notifyCardListReceived(cards: List<Card>) {
         for (action in actions) {
             action.onCardsReceived(cards)
         }

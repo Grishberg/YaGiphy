@@ -3,7 +3,7 @@ package com.github.grishberg.giphygateway
 import android.graphics.Bitmap
 import android.util.LruCache
 import androidx.annotation.MainThread
-import com.github.grishberg.core.AnyCard
+import com.github.grishberg.core.Card
 import com.github.grishberg.core.CardImageGateway
 import com.github.grishberg.giphygateway.api.ImageDownloader
 import kotlinx.coroutines.CoroutineScope
@@ -22,7 +22,7 @@ class CardsLruImageRepository(
 ) : CardImageGateway {
     private val actions = mutableListOf<CardImageGateway.ImageReadyAction>()
 
-    override fun requestImageForCard(card: AnyCard): Bitmap? {
+    override fun requestImageForCard(card: Card): Bitmap? {
 
         // 1) check from cache
         val bitmapFromCache = lruCache.get(card.imageUrl)
@@ -34,7 +34,7 @@ class CardsLruImageRepository(
         return null
     }
 
-    private fun downloadImageFromNetwork(card: AnyCard, url: String) =
+    private fun downloadImageFromNetwork(card: Card, url: String) =
         uiScope.launch {
             val task = async(Dispatchers.IO) {
                 // background thread
@@ -56,7 +56,7 @@ class CardsLruImageRepository(
     }
 
     @MainThread
-    private fun notifyCardImageReceived(card: AnyCard) {
+    private fun notifyCardImageReceived(card: Card) {
         for (action in actions) {
             action.onImageReadyForCard(card)
         }

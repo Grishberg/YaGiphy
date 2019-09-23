@@ -9,7 +9,6 @@ import com.github.grishberg.contentdetails.ContentDetails
 import com.github.grishberg.contentdetails.ContentDetailsUseCase
 import com.github.grishberg.contentdetails.gateway.ContentRepository
 import com.github.grishberg.contentdetailspresentation.ContentDetailsFacade
-import com.github.grishberg.contentdetailspresentation.GiphyContentDetailsFactory
 import com.github.grishberg.giphygateway.CardsListGateway
 import com.github.grishberg.giphygateway.CardsLruImageRepository
 import com.github.grishberg.imagelist.ImageListUseCase
@@ -51,14 +50,12 @@ class MainActivity : AppCompatActivity() {
         val contentDetailsInput = ContentRepository.create(uiScope)
         val contentDetails: ContentDetails =
             ContentDetailsUseCase(uiScope, imagesGateway, contentDetailsInput)
-        val contentDetailsFactory = GiphyContentDetailsFactory(contentDetails)
-        cardFactory.contentDetailsFactory = contentDetailsFactory
 
         val contentDetailsFacade = ContentDetailsFacade(contentDetails)
         appUseCase = ApplicationUseCase(cardList, contentDetails)
         contentDetailsFacade.attachToParent(this, content)
 
-        val router = Router(this, appUseCase, imagesListFacade, contentDetailsFacade)
+        Router(this, appUseCase, imagesListFacade, contentDetailsFacade)
     }
 
     private fun getMemoryClassFromActivity(): Int {
@@ -67,6 +64,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        appUseCase.onBackPressed()
+        if (!appUseCase.onBackPressed()) {
+            super.onBackPressed()
+        }
     }
 }

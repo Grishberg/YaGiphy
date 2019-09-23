@@ -4,8 +4,8 @@ import androidx.recyclerview.widget.DiffUtil
 import com.github.grishberg.core.Card
 
 class DiffUtilCallback(
-    private val oldItems: List<Card<*>>,
-    private val newItems: List<Card<*>>
+    private val oldItems: List<Card>,
+    private val newItems: List<Card>
 ) : DiffUtil.Callback() {
 
     override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean =

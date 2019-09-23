@@ -13,7 +13,7 @@ private const val FADE_DURATION = 1000
 internal class CardViewHolder(rootView: View) : RecyclerView.ViewHolder(rootView), CardRenderer {
     val image = rootView.findViewById<ImageView>(R.id.cardImage)
 
-    fun showDefaultBackground() {
+    override fun showDefaultBackground() {
         image.visibility = View.VISIBLE
         image.setImageResource(R.drawable.ic_image_placeholder)
     }
@@ -21,12 +21,12 @@ internal class CardViewHolder(rootView: View) : RecyclerView.ViewHolder(rootView
     /**
      * Show bitmap with animation
      */
-    fun showTargetBitmap(bitmap: Bitmap) {
+    override fun showTargetBitmap(bitmap: Bitmap) {
         image.visibility = View.VISIBLE
         image.setImageBitmap(bitmap)
     }
 
-    fun animate() {
+    override fun animate() {
         val anim = AlphaAnimation(0.0f, 1.0f)
         anim.duration = FADE_DURATION.toLong()
         itemView.startAnimation(anim)

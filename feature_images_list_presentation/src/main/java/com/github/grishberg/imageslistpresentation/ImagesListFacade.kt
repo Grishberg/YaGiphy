@@ -11,7 +11,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.github.grishberg.core.AnyCard
+import com.github.grishberg.core.Card
 import com.github.grishberg.imageslist.CardListPresentationFacade
 import com.github.grishberg.imageslist.CardsList
 import com.github.grishberg.imageslistpresentation.rv.CardsAdapter
@@ -40,7 +40,7 @@ class ImagesListFacade(
         val rv = createRecyclerView(activity, adapter, layoutManager, refreshLayout)
         parent.addView(refreshLayout)
 
-        viewModel.cards.observe(activity, Observer<List<AnyCard>> { cards ->
+        viewModel.cards.observe(activity, Observer<List<Card>> { cards ->
             adapter.populate(cards)
             refreshLayout.isRefreshing = false
         })

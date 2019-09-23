@@ -1,8 +1,8 @@
 package com.github.grishberg.contentdetails.gateway
 
 import com.github.grishberg.contentdetails.ContentDetailsInput
-import com.github.grishberg.core.AnyCard
-import com.github.grishberg.core.Content
+import com.github.grishberg.contentdetails.TwitterHashTag
+import com.github.grishberg.core.Card
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -13,13 +13,12 @@ class ContentRepository(
     private val twitterApi: TwitterApi
 ) : ContentDetailsInput {
 
-    override suspend fun requestContentDetails(selectedCard: AnyCard): Content {
+    override suspend fun requestTwitterUserName(selectedCard: Card): TwitterHashTag {
         val task = uiScope.async(Dispatchers.IO) {
             twitterApi.isValidTwitterHandle(selectedCard.twitterUserName)
         }
 
-        val isValidTwitter = task.await()
-        return selectedCard.createContent(isValidTwitter)
+        return task.await()
     }
 
     companion object {

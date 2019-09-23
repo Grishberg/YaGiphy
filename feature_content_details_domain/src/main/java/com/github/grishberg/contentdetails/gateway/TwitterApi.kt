@@ -1,6 +1,7 @@
 package com.github.grishberg.contentdetails.gateway
 
 import androidx.annotation.WorkerThread
+import com.github.grishberg.contentdetails.TwitterHashTag
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
@@ -28,7 +29,7 @@ class TwitterApi(
     /**
      * Returns true if given {@param userName} is existing twitter user name.
      */
-    fun isValidTwitterHandle(userName: String): Boolean {
+    fun isValidTwitterHandle(userName: String): TwitterHashTag {
         val httpBuilder = TWITTER_ENDPOINT.toHttpUrlOrNull()!!.newBuilder()
         httpBuilder.addQueryParameter("username", userName)
         val request = Request.Builder()
@@ -36,10 +37,13 @@ class TwitterApi(
             .build()
 
         val response = client.newCall(request).execute()
-        val body = response.body ?: return false
+        val body = response.body ?: return TwitterHashTag.EMPTY_HASHTAG
         val stream = body.charStream()
         val cardDataType = object : TypeToken<TwitterValidationData>() {}.type
         val validationData = gson.fromJson<TwitterValidationData>(stream, cardDataType)
-        return !validationData.valid && validationData.reason == TAKEN
+        if (validationData.valid || validationData.reason != TAKEN) {
+            return TwitterHashTag.EMPTY_HASHTAG
+        }
+        return TwitterHashTagImpl(true, "@$userName", "https://twitter.com/$userName")
     }
 }

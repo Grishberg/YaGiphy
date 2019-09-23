@@ -7,10 +7,10 @@ interface CardImageGateway {
         /**
          * Is called when image for {@param targetCard} is ready.
          */
-        fun onImageReadyForCard(targetCard: AnyCard)
+        fun onImageReadyForCard(targetCard: Card)
     }
 
-    fun requestImageForCard(card: AnyCard): Bitmap?
+    fun requestImageForCard(card: Card): Bitmap?
     fun registerImageReadyAction(action: ImageReadyAction)
     fun unregisterImageReadyAction(action: ImageReadyAction)
 }

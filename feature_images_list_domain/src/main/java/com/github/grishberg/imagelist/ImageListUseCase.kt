@@ -1,7 +1,7 @@
 package com.github.grishberg.imagelist
 
 import android.graphics.Bitmap
-import com.github.grishberg.core.AnyCard
+import com.github.grishberg.core.Card
 import com.github.grishberg.core.CardImageGateway
 import com.github.grishberg.imageslist.CardSelectedAction
 import com.github.grishberg.imageslist.CardsList
@@ -15,7 +15,7 @@ class ImageListUseCase(
     private val outputs = mutableListOf<CardsListOutput>()
     private val cardSelectedActions = mutableListOf<CardSelectedAction>()
     private var pageOffset = 0
-    private val cardsList = mutableListOf<AnyCard>()
+    private val cardsList = mutableListOf<Card>()
     private var isLoading: Boolean = false
 
     init {
@@ -23,13 +23,13 @@ class ImageListUseCase(
         imagesInput.registerImageReadyAction(this)
     }
 
-    override fun onCardSelected(selectedCard: AnyCard) {
+    override fun onCardSelected(selectedCard: Card) {
         for (action in cardSelectedActions) {
             action.invoke(selectedCard)
         }
     }
 
-    override fun requestImageByCard(shownCard: AnyCard): Bitmap? =
+    override fun requestImageByCard(shownCard: Card): Bitmap? =
         imagesInput.requestImageForCard(shownCard)
 
     override fun requestCardsFirstPage() {
@@ -38,7 +38,7 @@ class ImageListUseCase(
         pageOffset++
     }
 
-    override fun onCardsReceived(cardsPage: List<AnyCard>) {
+    override fun onCardsReceived(cardsPage: List<Card>) {
         isLoading = false
         for (card in cardsPage) {
             imagesInput.requestImageForCard(card)
@@ -55,7 +55,7 @@ class ImageListUseCase(
         }
     }
 
-    override fun onImageReadyForCard(targetCard: AnyCard) {
+    override fun onImageReadyForCard(targetCard: Card) {
         val targetItemPos = findCardPosition(targetCard)
         if (targetItemPos < 0) {
             return
@@ -65,7 +65,7 @@ class ImageListUseCase(
         }
     }
 
-    private fun findCardPosition(targetCard: AnyCard): Int = cardsList.lastIndexOf(targetCard)
+    private fun findCardPosition(targetCard: Card): Int = cardsList.lastIndexOf(targetCard)
 
     override fun onScrollStateChanged(lastVisibleItemPosition: Int) {
         if (isLoading) {

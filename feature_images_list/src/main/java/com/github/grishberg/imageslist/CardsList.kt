@@ -1,14 +1,14 @@
 package com.github.grishberg.imageslist
 
 import android.graphics.Bitmap
-import com.github.grishberg.core.AnyCard
+import com.github.grishberg.core.Card
 
-typealias CardSelectedAction = (AnyCard) -> Unit
+typealias CardSelectedAction = (Card) -> Unit
 
 interface CardsList {
     fun requestCardsFirstPage()
-    fun onCardSelected(selectedCard: AnyCard)
-    fun requestImageByCard(shownCard: AnyCard): Bitmap?
+    fun onCardSelected(selectedCard: Card)
+    fun requestImageByCard(shownCard: Card): Bitmap?
     /**
      * Is called when card list scrolled.
      */

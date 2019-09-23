@@ -1,7 +1,7 @@
 package com.github.grishberg.main.domain
 
 import com.github.grishberg.contentdetails.ContentDetails
-import com.github.grishberg.core.AnyCard
+import com.github.grishberg.core.Card
 import com.github.grishberg.imageslist.CardsList
 
 /**
@@ -25,18 +25,19 @@ class ApplicationUseCase(
     /**
      * Is called when user press back.
      */
-    fun onBackPressed() {
+    fun onBackPressed(): Boolean =
         state.onBackPressed()
-    }
+
 
     fun registerOutputBounds(output: OutputBounds) {
         outputBounds.add(output)
     }
 
     private inner class DetailedState : State {
-        override fun onBackPressed() {
+        override fun onBackPressed(): Boolean {
             state = cardListState
             notifyShowCardList()
+            return true
         }
 
         private fun notifyShowCardList() {
@@ -47,9 +48,9 @@ class ApplicationUseCase(
     }
 
     private inner class ListState : State {
-        override fun onCardSelected(selectedCard: AnyCard) {
+        override fun onCardSelected(selectedCard: Card) {
             state = detailedState
-            contentDetails.onContentDetailsCardSelected(selectedCard)
+            contentDetails.onCardSelected(selectedCard)
             notifyShowDetailedInformation()
         }
 
@@ -61,7 +62,7 @@ class ApplicationUseCase(
     }
 
     private interface State {
-        fun onBackPressed() = Unit
-        fun onCardSelected(selectedCard: AnyCard) = Unit
+        fun onBackPressed() = false
+        fun onCardSelected(selectedCard: Card) = Unit
     }
 }

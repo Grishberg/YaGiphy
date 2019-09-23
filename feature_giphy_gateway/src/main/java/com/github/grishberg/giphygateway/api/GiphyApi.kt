@@ -1,7 +1,7 @@
 package com.github.grishberg.giphygateway.api
 
 import androidx.annotation.WorkerThread
-import com.github.grishberg.core.AnyCard
+import com.github.grishberg.core.Card
 import com.github.grishberg.giphygateway.Data
 import com.github.grishberg.imageslist.CardFactory
 import com.google.gson.Gson
@@ -30,7 +30,7 @@ class GiphyApi(
     }
 
     @Throws(ResponseNotSuccessException::class)
-    fun getTopCardList(offset: Int): List<AnyCard> {
+    fun getTopCardList(offset: Int): List<Card> {
 
         val httpBuilder = TREND_ENDPOINT.toHttpUrlOrNull()!!.newBuilder()
         httpBuilder.addQueryParameter("api_key", apiKey)
@@ -49,7 +49,7 @@ class GiphyApi(
         val cardDataType = object : TypeToken<Data>() {}.type
         val cardDataList = gson.fromJson<Data>(stream, cardDataType)
 
-        val result = mutableListOf<AnyCard>()
+        val result = mutableListOf<Card>()
         for (cardData in cardDataList.data) {
             result.add(
                 cardFactory.createCard(
