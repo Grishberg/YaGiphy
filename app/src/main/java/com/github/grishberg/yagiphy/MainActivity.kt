@@ -5,19 +5,25 @@ import android.content.Context
 import android.os.Bundle
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import com.github.grishberg.contentdetails.ContentDetails
+import com.github.grishberg.contentdetails.ContentDetailsUseCase
+import com.github.grishberg.contentdetails.gateway.ContentRepository
+import com.github.grishberg.contentdetailspresentation.ContentDetailsFacade
 import com.github.grishberg.giphygateway.CardsListGateway
 import com.github.grishberg.giphygateway.CardsLruImageRepository
 import com.github.grishberg.imagelist.ImageListUseCase
-import com.github.grishberg.imageslist.CardsList
 import com.github.grishberg.imageslistpresentation.ImagesListFacade
 import com.github.grishberg.imageslistpresentation.VerticalCardFactory
+import com.github.grishberg.main.domain.ApplicationUseCase
 import com.github.grishberg.yagiphy.BuildConfig.API_KEY
 
-
+/**
+ * Creates all modules together.
+ */
 class MainActivity : AppCompatActivity() {
     private val uiScope = MainScope()
     private lateinit var imagesListFacade: ImagesListFacade
-    private lateinit var cardList: CardsList
+    private lateinit var appUseCase: ApplicationUseCase
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,7 +36,7 @@ class MainActivity : AppCompatActivity() {
 
         val memClass = getMemoryClassFromActivity()
         val imagesGateway = CardsLruImageRepository.create(uiScope, memClass)
-        cardList = ImageListUseCase(cardListInput, imagesGateway)
+        val cardList = ImageListUseCase(cardListInput, imagesGateway)
 
         val cardFactory = VerticalCardFactory(cardList)
         cardListInput.setCardFactory(cardFactory)
@@ -38,10 +44,22 @@ class MainActivity : AppCompatActivity() {
         imagesListFacade = ImagesListFacade(cardList)
         imagesListFacade.attachToParent(this, content)
         cardList.requestCardsFirstPage()
+
+
+        val contentDetailsInput = ContentRepository()
+        val contentDetails: ContentDetails =
+            ContentDetailsUseCase(imagesGateway, contentDetailsInput)
+        val contentDetailsFacade = ContentDetailsFacade(contentDetails)
+        appUseCase = ApplicationUseCase(cardList, contentDetails)
+        contentDetailsFacade.attachToParent(this, content)
     }
 
     private fun getMemoryClassFromActivity(): Int {
         val am = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
         return am.memoryClass
+    }
+
+    override fun onBackPressed() {
+        appUseCase.onBackPressed()
     }
 }

@@ -1,7 +1,5 @@
 package com.github.grishberg.contentdetails
 
-import com.github.grishberg.core.Card
-
 interface ContentDetailsOutput {
     /**
      * Is called when content details is ready.
@@ -11,7 +9,7 @@ interface ContentDetailsOutput {
     /**
      * Is called when image for card received.
      */
-    fun updateCardImage(card: Card<*>)
+    fun updateCardImage()
 
     /**
      * Is called when error happens.

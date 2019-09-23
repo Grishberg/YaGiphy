@@ -1,4 +1,4 @@
-include ':app', ':core',
+include ':app', ':core', ':main_module',
         ':feature_images_list',
         ':feature_images_list_domain',
         ':feature_images_list_presentation',

@@ -17,15 +17,14 @@ data class CardData(
 )
 
 data class Images(
-    @SerializedName("fixed_height_still")
-    val fixedHeightStill: FixedHighStillImage
+    @SerializedName("480w_still")
+    val previewImage: PreviewImage
 )
 
-data class FixedHighStillImage(
+data class PreviewImage(
     val url: String,
     val width: Int,
-    val height: Int,
-    val size: Int
+    val height: Int
 )
 
 data class Pagination(

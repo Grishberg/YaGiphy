@@ -1,8 +1,9 @@
 package com.github.grishberg.contentdetails
 
-import com.github.grishberg.core.Card
+import com.github.grishberg.core.AnyCard
 
 interface ContentDetails {
-    fun onContentDetailsCardSelected(card: Card<*>)
-    fun onBackPressed()
+    fun onContentDetailsCardSelected(card: AnyCard)
+    fun registerOutput(output: ContentDetailsOutput)
+    fun unregisterOutput(output: ContentDetailsOutput)
 }

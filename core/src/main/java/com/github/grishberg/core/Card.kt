@@ -6,6 +6,7 @@ typealias AnyCard = Card<*>
 
 interface Card<R : CardRenderer> {
     fun requestImage(delegate: GetImageDelegate): Bitmap?
+    fun requestTwitterHandle(delegate: RequestTwitterHandleDelegate)
     fun render(renderer: R)
     fun isContentTheSame(card: AnyCard): Boolean
     fun handleClick()

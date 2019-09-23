@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import com.github.grishberg.core.AnyCard
 import com.github.grishberg.core.Card
 import com.github.grishberg.core.GetImageDelegate
+import com.github.grishberg.core.RequestTwitterHandleDelegate
 import com.github.grishberg.imageslist.CardsList
 import com.github.grishberg.imageslistpresentation.rv.CardViewHolder
 
@@ -15,12 +16,17 @@ internal class VerticalListCard(
     private val id: String,
     private val url: String,
     private val imageUrl: String,
+    private val userName: String,
     private val cardsList: CardsList
 ) : Card<CardViewHolder> {
     private var hasImage = false
 
     override fun requestImage(delegate: GetImageDelegate): Bitmap? {
         return delegate.getImageByUrl(this, imageUrl)
+    }
+
+    override fun requestTwitterHandle(delegate: RequestTwitterHandleDelegate) {
+        delegate.requestTwitterHandle(userName)
     }
 
     override fun render(renderer: CardViewHolder) {

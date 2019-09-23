@@ -51,7 +51,7 @@ class GiphyApi(
                 cardFactory.createCard(
                     cardData.id,
                     cardData.url,
-                    cardData.images.fixedHeightStill.url
+                    cardData.images.previewImage.url
                 )
             )
         }

@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.github.grishberg.core.AnyCard
+import com.github.grishberg.imageslist.CardListPresentationFacade
 import com.github.grishberg.imageslist.CardsList
 import com.github.grishberg.imageslistpresentation.rv.CardsAdapter
 
@@ -19,11 +20,12 @@ import com.github.grishberg.imageslistpresentation.rv.CardsAdapter
  */
 class ImagesListFacade(
     private val cardsList: CardsList
-) {
+) : CardListPresentationFacade {
+
     /**
      * Creates vertical list view and attaches to {@param parent}
      */
-    fun attachToParent(activity: FragmentActivity, parent: ViewGroup) {
+    override fun attachToParent(activity: FragmentActivity, parent: ViewGroup) {
         val viewModel = ViewModelProviders
             .of(activity, ViewModelFactory(cardsList))
             .get(ImagesListViewModel::class.java)
