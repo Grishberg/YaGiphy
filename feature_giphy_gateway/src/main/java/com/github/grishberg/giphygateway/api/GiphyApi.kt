@@ -29,6 +29,7 @@ class GiphyApi(
         gson = gsonBuilder.create()
     }
 
+    @Throws(ResponseNotSuccessException::class)
     fun getTopCardList(offset: Int): List<AnyCard> {
 
         val httpBuilder = TREND_ENDPOINT.toHttpUrlOrNull()!!.newBuilder()
@@ -40,6 +41,9 @@ class GiphyApi(
             .build()
 
         val response = client.newCall(request).execute()
+        if (!response.isSuccessful) {
+            throw ResponseNotSuccessException("Could not receive data\n response code is ${response.code}")
+        }
         val body = response.body ?: return emptyList()
         val stream = body.charStream()
         val cardDataType = object : TypeToken<Data>() {}.type
@@ -51,7 +55,8 @@ class GiphyApi(
                 cardFactory.createCard(
                     cardData.id,
                     cardData.url,
-                    cardData.images.previewImage.url
+                    cardData.images.previewImage.url,
+                    cardData.username
                 )
             )
         }

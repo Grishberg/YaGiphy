@@ -4,9 +4,7 @@ import android.graphics.Bitmap
 import android.util.LruCache
 import androidx.annotation.MainThread
 import com.github.grishberg.core.AnyCard
-import com.github.grishberg.core.Card
 import com.github.grishberg.core.CardImageGateway
-import com.github.grishberg.core.GetImageDelegate
 import com.github.grishberg.giphygateway.api.ImageDownloader
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -21,21 +19,18 @@ class CardsLruImageRepository(
     private val uiScope: CoroutineScope,
     private val imageDownloader: ImageDownloader,
     private val lruCache: LruCache<String, Bitmap>
-) : CardImageGateway, GetImageDelegate {
+) : CardImageGateway {
     private val actions = mutableListOf<CardImageGateway.ImageReadyAction>()
 
     override fun requestImageForCard(card: AnyCard): Bitmap? {
-        return card.requestImage(this)
-    }
 
-    override fun getImageByUrl(card: Card<*>, url: String): Bitmap? {
         // 1) check from cache
-        val bitmapFromCache = lruCache.get(url)
+        val bitmapFromCache = lruCache.get(card.imageUrl)
         if (bitmapFromCache != null) {
             return bitmapFromCache
         }
 
-        downloadImageFromNetwork(card, url)
+        downloadImageFromNetwork(card, card.imageUrl)
         return null
     }
 
@@ -61,7 +56,7 @@ class CardsLruImageRepository(
     }
 
     @MainThread
-    private fun notifyCardImageReceived(card: Card<*>) {
+    private fun notifyCardImageReceived(card: AnyCard) {
         for (action in actions) {
             action.onImageReadyForCard(card)
         }

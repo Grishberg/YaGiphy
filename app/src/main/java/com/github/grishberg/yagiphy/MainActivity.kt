@@ -9,12 +9,14 @@ import com.github.grishberg.contentdetails.ContentDetails
 import com.github.grishberg.contentdetails.ContentDetailsUseCase
 import com.github.grishberg.contentdetails.gateway.ContentRepository
 import com.github.grishberg.contentdetailspresentation.ContentDetailsFacade
+import com.github.grishberg.contentdetailspresentation.GiphyContentDetailsFactory
 import com.github.grishberg.giphygateway.CardsListGateway
 import com.github.grishberg.giphygateway.CardsLruImageRepository
 import com.github.grishberg.imagelist.ImageListUseCase
 import com.github.grishberg.imageslistpresentation.ImagesListFacade
 import com.github.grishberg.imageslistpresentation.VerticalCardFactory
 import com.github.grishberg.main.domain.ApplicationUseCase
+import com.github.grishberg.main.presentation.Router
 import com.github.grishberg.yagiphy.BuildConfig.API_KEY
 
 /**
@@ -46,12 +48,17 @@ class MainActivity : AppCompatActivity() {
         cardList.requestCardsFirstPage()
 
 
-        val contentDetailsInput = ContentRepository()
+        val contentDetailsInput = ContentRepository.create(uiScope)
         val contentDetails: ContentDetails =
-            ContentDetailsUseCase(imagesGateway, contentDetailsInput)
+            ContentDetailsUseCase(uiScope, imagesGateway, contentDetailsInput)
+        val contentDetailsFactory = GiphyContentDetailsFactory(contentDetails)
+        cardFactory.contentDetailsFactory = contentDetailsFactory
+
         val contentDetailsFacade = ContentDetailsFacade(contentDetails)
         appUseCase = ApplicationUseCase(cardList, contentDetails)
         contentDetailsFacade.attachToParent(this, content)
+
+        val router = Router(this, appUseCase, imagesListFacade, contentDetailsFacade)
     }
 
     private fun getMemoryClassFromActivity(): Int {

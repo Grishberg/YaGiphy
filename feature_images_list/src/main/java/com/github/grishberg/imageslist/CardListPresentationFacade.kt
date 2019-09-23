@@ -5,4 +5,6 @@ import androidx.fragment.app.FragmentActivity
 
 interface CardListPresentationFacade {
     fun attachToParent(activity: FragmentActivity, parent: ViewGroup)
+    fun hide()
+    fun show()
 }

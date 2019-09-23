@@ -1,31 +1,40 @@
 package com.github.grishberg.contentdetails
 
+import android.graphics.Bitmap
 import com.github.grishberg.core.AnyCard
 import com.github.grishberg.core.CardImageGateway
+import com.github.grishberg.core.Content
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 class ContentDetailsUseCase(
-    private val imageGateway: CardImageGateway,
+    private val uiScope: CoroutineScope,
+    private val imageInput: CardImageGateway,
     private val input: ContentDetailsInput
-) : ContentDetails, ContentDetailsInput.ContentDetailsReceivedAction,
-    CardImageGateway.ImageReadyAction {
+) : ContentDetails, CardImageGateway.ImageReadyAction {
     private var currentCard: AnyCard? = null
     private val outputs = mutableListOf<ContentDetailsOutput>()
 
     init {
-        input.registerContentReceivedAction(this)
-        imageGateway.registerImageReadyAction(this)
+        imageInput.registerImageReadyAction(this)
     }
 
     override fun onContentDetailsCardSelected(card: AnyCard) {
         currentCard = card
-        input.requestContentDetails(card)
+        uiScope.launch {
+            val content = input.requestContentDetails(card)
+            notifyContentReceived(content)
+        }
     }
 
-    override fun onContendReceived(content: Content) {
+    private fun notifyContentReceived(content: Content) {
         for(output in outputs) {
             output.showContentDetails(content)
         }
     }
+
+    override fun getImageForUrl(selectedCard: AnyCard): Bitmap? =
+        imageInput.requestImageForCard(selectedCard)
 
     override fun onImageReadyForCard(targetCard: AnyCard) {
         if (targetCard != currentCard) {
@@ -36,7 +45,10 @@ class ContentDetailsUseCase(
         }
     }
 
-    override fun onContentReceiveError(message: String) {
+    /**
+     * TODO: handle errors.
+     */
+    private fun onContentReceiveError(message: String) {
         for(output in outputs) {
             output.showError(message)
         }

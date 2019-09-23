@@ -1,5 +1,6 @@
 package com.github.grishberg.imageslistpresentation
 
+import com.github.grishberg.contentdetails.ContentDetailsFactory
 import com.github.grishberg.core.AnyCard
 import com.github.grishberg.imageslist.CardFactory
 import com.github.grishberg.imageslist.CardsList
@@ -7,7 +8,14 @@ import com.github.grishberg.imageslist.CardsList
 class VerticalCardFactory(
     private val cardsList: CardsList
 ) : CardFactory {
-    override fun createCard(id: String, url: String, imageUrl: String): AnyCard {
-        return VerticalListCard(id, url, imageUrl, cardsList)
+    lateinit var contentDetailsFactory: ContentDetailsFactory
+
+    override fun createCard(
+        id: String,
+        url: String,
+        imageUrl: String,
+        userName: String
+    ): AnyCard {
+        return VerticalListCard(id, url, imageUrl, userName, cardsList, contentDetailsFactory)
     }
 }

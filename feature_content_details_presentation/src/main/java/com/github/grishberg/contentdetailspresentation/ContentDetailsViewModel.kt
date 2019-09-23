@@ -3,9 +3,9 @@ package com.github.grishberg.contentdetailspresentation
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.github.grishberg.contentdetails.Content
 import com.github.grishberg.contentdetails.ContentDetails
 import com.github.grishberg.contentdetails.ContentDetailsOutput
+import com.github.grishberg.core.Content
 import com.github.grishberg.core.SingleLiveEvent
 
 class ContentDetailsViewModel(

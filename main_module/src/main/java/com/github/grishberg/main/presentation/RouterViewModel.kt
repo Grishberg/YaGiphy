@@ -7,7 +7,7 @@ import com.github.grishberg.main.domain.ApplicationUseCase
 import com.github.grishberg.main.domain.OutputBounds
 
 class RouterViewModel(
-    private val applicationLogic: ApplicationUseCase
+    applicationLogic: ApplicationUseCase
 ) : ViewModel(), OutputBounds {
     private val _showCardContentScreen = MutableLiveData<Boolean>()
     val showCardContentScreen: LiveData<Boolean> = _showCardContentScreen

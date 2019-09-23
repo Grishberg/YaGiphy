@@ -1,5 +1,7 @@
 package com.github.grishberg.contentdetails
 
+import com.github.grishberg.core.Content
+
 interface ContentDetailsOutput {
     /**
      * Is called when content details is ready.

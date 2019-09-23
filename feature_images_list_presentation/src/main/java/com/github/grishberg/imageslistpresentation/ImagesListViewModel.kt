@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.github.grishberg.core.AnyCard
 import com.github.grishberg.core.Card
+import com.github.grishberg.core.SingleLiveEvent
 import com.github.grishberg.imageslist.CardsList
 import com.github.grishberg.imageslist.CardsListOutput
 
@@ -20,6 +21,10 @@ class ImagesListViewModel(
     val updatedCardPosition: LiveData<Int>
         get() = _updatedItemPosition
 
+    private val _onError = SingleLiveEvent<String>()
+    val onError: LiveData<String>
+        get() = _onError
+
     init {
         cardsList.registerOutput(this)
     }
@@ -34,5 +39,9 @@ class ImagesListViewModel(
 
     override fun onCleared() {
         cardsList.unregisterOutput(this)
+    }
+
+    override fun showError(message: String) {
+        _onError.value = message
     }
 }

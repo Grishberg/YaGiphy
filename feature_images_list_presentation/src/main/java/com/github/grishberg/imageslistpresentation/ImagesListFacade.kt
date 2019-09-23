@@ -1,6 +1,7 @@
 package com.github.grishberg.imageslistpresentation
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
@@ -14,6 +15,7 @@ import com.github.grishberg.core.AnyCard
 import com.github.grishberg.imageslist.CardListPresentationFacade
 import com.github.grishberg.imageslist.CardsList
 import com.github.grishberg.imageslistpresentation.rv.CardsAdapter
+import com.google.android.material.snackbar.Snackbar
 
 /***
  * Facade for vertical card list view.
@@ -21,6 +23,7 @@ import com.github.grishberg.imageslistpresentation.rv.CardsAdapter
 class ImagesListFacade(
     private val cardsList: CardsList
 ) : CardListPresentationFacade {
+    private var rootView: View? = null
 
     /**
      * Creates vertical list view and attaches to {@param parent}
@@ -45,6 +48,12 @@ class ImagesListFacade(
         viewModel.updatedCardPosition.observe(activity, Observer<Int> { updatedItemPosition ->
             adapter.notifyItemChanged(updatedItemPosition)
         })
+
+        viewModel.onError.observe(activity, Observer<String> { message ->
+            refreshLayout.isRefreshing = false
+            Snackbar.make(refreshLayout, message, Snackbar.LENGTH_LONG).show()
+        })
+
         rv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
 
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
@@ -52,6 +61,15 @@ class ImagesListFacade(
                 cardsList.onScrollStateChanged(lastVisibleItemPosition)
             }
         })
+        rootView = refreshLayout
+    }
+
+    override fun hide() {
+        rootView?.let { it.visibility = View.GONE }
+    }
+
+    override fun show() {
+        rootView?.let { it.visibility = View.VISIBLE }
     }
 
     private fun createRecyclerView(

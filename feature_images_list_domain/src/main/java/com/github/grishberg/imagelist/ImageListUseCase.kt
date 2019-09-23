@@ -3,6 +3,7 @@ package com.github.grishberg.imagelist
 import android.graphics.Bitmap
 import com.github.grishberg.core.AnyCard
 import com.github.grishberg.core.CardImageGateway
+import com.github.grishberg.imageslist.CardSelectedAction
 import com.github.grishberg.imageslist.CardsList
 import com.github.grishberg.imageslist.CardsListInput
 import com.github.grishberg.imageslist.CardsListOutput
@@ -12,6 +13,7 @@ class ImageListUseCase(
     private val imagesInput: CardImageGateway
 ) : CardsList, CardsListInput.CardsReceivedAction, CardImageGateway.ImageReadyAction {
     private val outputs = mutableListOf<CardsListOutput>()
+    private val cardSelectedActions = mutableListOf<CardSelectedAction>()
     private var pageOffset = 0
     private val cardsList = mutableListOf<AnyCard>()
     private var isLoading: Boolean = false
@@ -21,8 +23,10 @@ class ImageListUseCase(
         imagesInput.registerImageReadyAction(this)
     }
 
-    override fun onCardSelected(selectedCardUrl: String) {
-
+    override fun onCardSelected(selectedCard: AnyCard) {
+        for (action in cardSelectedActions) {
+            action.invoke(selectedCard)
+        }
     }
 
     override fun requestImageByCard(shownCard: AnyCard): Bitmap? =
@@ -46,7 +50,9 @@ class ImageListUseCase(
     }
 
     override fun onError(message: String) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        for (output in outputs) {
+            output.showError(message)
+        }
     }
 
     override fun onImageReadyForCard(targetCard: AnyCard) {
@@ -78,5 +84,13 @@ class ImageListUseCase(
 
     override fun unregisterOutput(output: CardsListOutput) {
         outputs.remove(output)
+    }
+
+    override fun registerCardSelectedAction(action: CardSelectedAction) {
+        cardSelectedActions.add(action)
+    }
+
+    override fun unregisterCardSelectedAction(action: CardSelectedAction) {
+        cardSelectedActions.remove(action)
     }
 }

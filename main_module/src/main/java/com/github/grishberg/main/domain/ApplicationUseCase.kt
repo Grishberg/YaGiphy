@@ -1,16 +1,26 @@
 package com.github.grishberg.main.domain
 
 import com.github.grishberg.contentdetails.ContentDetails
+import com.github.grishberg.core.AnyCard
 import com.github.grishberg.imageslist.CardsList
 
+/**
+ * Application use case, contains main logic for switching between screens.
+ */
 class ApplicationUseCase(
-    private val cardsList: CardsList,
+    cardsList: CardsList,
     private val contentDetails: ContentDetails
 ) {
     private val cardListState = ListState()
     private val detailedState = DetailedState()
     private var state: State = cardListState
     private val outputBounds = mutableListOf<OutputBounds>()
+
+    init {
+        cardsList.registerCardSelectedAction {
+            state.onCardSelected(it)
+        }
+    }
 
     /**
      * Is called when user press back.
@@ -37,8 +47,9 @@ class ApplicationUseCase(
     }
 
     private inner class ListState : State {
-        override fun onCardSelected() {
+        override fun onCardSelected(selectedCard: AnyCard) {
             state = detailedState
+            contentDetails.onContentDetailsCardSelected(selectedCard)
             notifyShowDetailedInformation()
         }
 
@@ -51,6 +62,6 @@ class ApplicationUseCase(
 
     private interface State {
         fun onBackPressed() = Unit
-        fun onCardSelected() = Unit
+        fun onCardSelected(selectedCard: AnyCard) = Unit
     }
 }

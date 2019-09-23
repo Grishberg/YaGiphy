@@ -4,10 +4,7 @@ import com.github.grishberg.core.AnyCard
 import com.github.grishberg.giphygateway.api.GiphyApi
 import com.github.grishberg.imageslist.CardFactory
 import com.github.grishberg.imageslist.CardsListInput
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import okhttp3.OkHttpClient
 
 class CardsListGateway(
@@ -15,6 +12,11 @@ class CardsListGateway(
     private val giphyApi: GiphyApi
 ) : CardsListInput {
     private val actions = mutableListOf<CardsListInput.CardsReceivedAction>()
+    private val errorHandler = CoroutineExceptionHandler { _, exception ->
+        uiScope.launch(Dispatchers.Main) {
+            notifyError(exception.message)
+        }
+    }
 
     constructor(uiScope: CoroutineScope, apiKey: String) :
             this(uiScope, GiphyApi(apiKey, OkHttpClient()))
@@ -24,7 +26,7 @@ class CardsListGateway(
     }
 
     override fun requestTopCards(offset: Int) {
-        uiScope.launch {
+        uiScope.launch(errorHandler) {
             val task = async(Dispatchers.IO) {
                 // background thread
                 giphyApi.getTopCardList(offset)
@@ -47,4 +49,11 @@ class CardsListGateway(
             action.onCardsReceived(cards)
         }
     }
+
+    private fun notifyError(message: String?) {
+        for (action in actions) {
+            action.onError(message.orEmpty())
+        }
+    }
+
 }
