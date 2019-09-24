@@ -1,32 +1,29 @@
 package com.github.grishberg.main.presentation
 
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.*
 import com.github.grishberg.contentdetails.ContentDetailsPresentationFacade
 import com.github.grishberg.imageslist.CardListPresentationFacade
 import com.github.grishberg.main.domain.ApplicationUseCase
 
-
+/**
+ * Switches cards list or content visibility.
+ */
 class Router(
-    private val activity: FragmentActivity,
-    private val appUseCase: ApplicationUseCase,
+    activity: FragmentActivity,
+    appUseCase: ApplicationUseCase,
     private val cardsListFacade: CardListPresentationFacade,
     private val contentDetailsFacade: ContentDetailsPresentationFacade
-) {
+) : LifecycleObserver {
 
     init {
         val viewModel = ViewModelProviders
             .of(activity, ViewModelFactory(appUseCase))
             .get(RouterViewModel::class.java)
 
-
         viewModel.showCardContentScreen.observe(activity, Observer<Boolean> { shouldShow ->
             if (shouldShow) {
                 showContentDetailsScreen()
-
             } else {
                 showCardsList()
             }

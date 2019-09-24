@@ -46,4 +46,7 @@ internal class VerticalListCard(
         }
         return id == card.id
     }
+
+    override fun toString(): String =
+        "{id=$id, userName=$userName}"
 }

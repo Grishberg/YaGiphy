@@ -14,13 +14,13 @@ class ImageListUseCase(
 ) : CardsList, CardsListInput.CardsReceivedAction, CardImageGateway.ImageReadyAction {
     private val outputs = mutableListOf<CardsListOutput>()
     private val cardSelectedActions = mutableListOf<CardSelectedAction>()
-    private var pageOffset = 0
     private val cardsList = mutableListOf<Card>()
     private var isLoading: Boolean = false
 
     init {
         input.registerCardsReceivedAction(this)
         imagesInput.registerImageReadyAction(this)
+        requestCardsFirstPage()
     }
 
     override fun onCardSelected(selectedCard: Card) {
@@ -35,7 +35,6 @@ class ImageListUseCase(
     override fun requestCardsFirstPage() {
         cardsList.clear()
         input.requestTopCards(0)
-        pageOffset++
     }
 
     override fun onCardsReceived(cardsPage: List<Card>) {

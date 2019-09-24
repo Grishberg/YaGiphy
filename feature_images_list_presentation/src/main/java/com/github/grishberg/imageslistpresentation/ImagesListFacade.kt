@@ -1,13 +1,11 @@
 package com.github.grishberg.imageslistpresentation
 
+import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.*
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -22,8 +20,10 @@ import com.google.android.material.snackbar.Snackbar
  */
 class ImagesListFacade(
     private val cardsList: CardsList
-) : CardListPresentationFacade {
+) : CardListPresentationFacade, LifecycleObserver {
     private var rootView: View? = null
+    private var layoutManager: LinearLayoutManager? = null
+    private var vm: ImagesListViewModel? = null
 
     /**
      * Creates vertical list view and attaches to {@param parent}
@@ -34,10 +34,12 @@ class ImagesListFacade(
             .get(ImagesListViewModel::class.java)
 
         val adapter = CardsAdapter(LayoutInflater.from(activity))
-        val refreshLayout = createRefreshLayout(activity)
 
-        val layoutManager = LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
-        val rv = createRecyclerView(activity, adapter, layoutManager, refreshLayout)
+        val lm = LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
+        val rv = createRecyclerView(activity, adapter, lm)
+        val refreshLayout = createRefreshLayout(activity).apply {
+            addView(rv)
+        }
         parent.addView(refreshLayout)
 
         viewModel.cards.observe(activity, Observer<List<Card>> { cards ->
@@ -55,13 +57,24 @@ class ImagesListFacade(
         })
 
         rv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                val lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
+                val lastVisibleItemPosition = lm.findLastVisibleItemPosition()
                 cardsList.onScrollStateChanged(lastVisibleItemPosition)
             }
         })
+        if (viewModel.imageListState != null) {
+            restoreStateIfNeeded(rv, viewModel.imageListState)
+            viewModel.imageListState = null
+        }
+        layoutManager = lm
         rootView = refreshLayout
+        vm = viewModel
+    }
+
+    private fun restoreStateIfNeeded(rv: RecyclerView, imageListState: Parcelable?) {
+        imageListState?.let { lmState ->
+            rv.layoutManager?.onRestoreInstanceState(lmState)
+        }
     }
 
     override fun hide() {
@@ -75,13 +88,12 @@ class ImagesListFacade(
     private fun createRecyclerView(
         activity: FragmentActivity,
         adapter: CardsAdapter,
-        layoutManager: LinearLayoutManager,
-        refreshLayout: SwipeRefreshLayout
+        layoutManager: LinearLayoutManager
     ): RecyclerView {
         val rv = RecyclerView(activity)
+        rv.id = R.id.cardsListView
         rv.adapter = adapter
         rv.layoutManager = layoutManager
-        refreshLayout.addView(rv)
         return rv
     }
 
@@ -91,6 +103,14 @@ class ImagesListFacade(
             cardsList.requestCardsFirstPage()
         }
         return refreshLayout
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+    fun saveState() {
+        layoutManager?.let { lm ->
+            val cardsLayoutManagerState = lm.onSaveInstanceState()
+            vm?.let { it.imageListState = cardsLayoutManagerState }
+        }
     }
 
     @Suppress("UNCHECKED_CAST")

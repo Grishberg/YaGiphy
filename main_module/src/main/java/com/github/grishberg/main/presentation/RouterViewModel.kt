@@ -6,6 +6,9 @@ import androidx.lifecycle.ViewModel
 import com.github.grishberg.main.domain.ApplicationUseCase
 import com.github.grishberg.main.domain.OutputBounds
 
+/**
+ * Sends messages from {@link ApplicationUseCase} to router.
+ */
 class RouterViewModel(
     applicationLogic: ApplicationUseCase
 ) : ViewModel(), OutputBounds {
