@@ -10,8 +10,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 
 
-private const val TWITTER_ENDPOINT =
-    "https://twitter.com/users/username_available?username=#{handle.substr(1)}"
+private const val TWITTER_ENDPOINT = "https://twitter.com/users/username_available"
 private const val TAKEN = "taken"
 
 @WorkerThread
@@ -29,7 +28,7 @@ class TwitterApi(
     /**
      * Returns true if given {@param userName} is existing twitter user name.
      */
-    fun isValidTwitterHandle(userName: String): TwitterHashTag {
+    fun requestValidTwitterHandle(userName: String): TwitterHashTag {
         val httpBuilder = TWITTER_ENDPOINT.toHttpUrlOrNull()!!.newBuilder()
         httpBuilder.addQueryParameter("username", userName)
         val request = Request.Builder()

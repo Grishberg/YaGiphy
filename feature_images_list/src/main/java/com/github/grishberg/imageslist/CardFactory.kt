@@ -1,6 +1,6 @@
 package com.github.grishberg.imageslist
 
-import com.github.grishberg.core.AnyCard
+import com.github.grishberg.core.Card
 
 interface CardFactory {
     fun createCard(
@@ -8,7 +8,7 @@ interface CardFactory {
         url: String,
         imageUrl: String,
         userName: String
-    ): AnyCard
+    ): Card
 
     object STUB : CardFactory {
         override fun createCard(
@@ -16,7 +16,7 @@ interface CardFactory {
             url: String,
             imageUrl: String,
             userName: String
-        ): AnyCard {
+        ): Card {
             throw IllegalStateException("This is Stub, use real implementation instead.")
         }
     }

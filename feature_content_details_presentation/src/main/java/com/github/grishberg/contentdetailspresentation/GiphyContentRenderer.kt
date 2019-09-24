@@ -12,7 +12,7 @@ class GiphyContentRenderer(
     private val twitterHashTitle: TextView
 ) : CardRenderer {
     override fun showDefaultBackground() {
-        imageView.setImageResource(R.drawable.ic_image_placeholder)
+        imageView.setImageResource(R.drawable.ic_launcher_background)
     }
 
     override fun showTargetBitmap(bitmap: Bitmap) {

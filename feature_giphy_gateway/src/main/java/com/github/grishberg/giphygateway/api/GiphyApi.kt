@@ -31,7 +31,6 @@ class GiphyApi(
 
     @Throws(ResponseNotSuccessException::class)
     fun getTopCardList(offset: Int): List<Card> {
-
         val httpBuilder = TREND_ENDPOINT.toHttpUrlOrNull()!!.newBuilder()
         httpBuilder.addQueryParameter("api_key", apiKey)
         httpBuilder.addQueryParameter("offset", offset.toString())

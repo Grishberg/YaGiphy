@@ -15,7 +15,7 @@ class ContentRepository(
 
     override suspend fun requestTwitterUserName(selectedCard: Card): TwitterHashTag {
         val task = uiScope.async(Dispatchers.IO) {
-            twitterApi.isValidTwitterHandle(selectedCard.twitterUserName)
+            twitterApi.requestValidTwitterHandle(selectedCard.twitterUserName)
         }
 
         return task.await()

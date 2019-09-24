@@ -6,15 +6,18 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.*
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.github.grishberg.core.Card
 import com.github.grishberg.imageslist.CardListPresentationFacade
 import com.github.grishberg.imageslist.CardsList
+import com.github.grishberg.imageslistpresentation.rv.CardItemDecoration
 import com.github.grishberg.imageslistpresentation.rv.CardsAdapter
 import com.google.android.material.snackbar.Snackbar
 
+private const val COLUMNS_COUNT = 2
 /***
  * Facade for vertical card list view.
  */
@@ -35,8 +38,9 @@ class ImagesListFacade(
 
         val adapter = CardsAdapter(LayoutInflater.from(activity))
 
-        val lm = LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
+        val lm = GridLayoutManager(activity, COLUMNS_COUNT)
         val rv = createRecyclerView(activity, adapter, lm)
+        rv.addItemDecoration(CardItemDecoration(activity.resources))
         val refreshLayout = createRefreshLayout(activity).apply {
             addView(rv)
         }
