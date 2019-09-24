@@ -3,7 +3,9 @@ package com.github.grishberg.contentdetails
 import android.graphics.Bitmap
 import com.github.grishberg.core.Card
 import com.github.grishberg.core.CardImageGateway
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class ContentDetailsUseCase(
@@ -13,6 +15,11 @@ class ContentDetailsUseCase(
 ) : ContentDetails, CardImageGateway.ImageReadyAction {
     private var currentCard: Card? = null
     private val outputs = mutableListOf<ContentDetailsOutput>()
+    private val errorHandler = CoroutineExceptionHandler { _, exception ->
+        uiScope.launch(Dispatchers.Main) {
+            outputs.forEach { it.showError(exception.message.orEmpty()) }
+        }
+    }
 
     init {
         imageInput.registerImageReadyAction(this)
@@ -23,20 +30,12 @@ class ContentDetailsUseCase(
         notifyCardSelected(card)
         uiScope.launch {
             val twitterHashTag = input.requestTwitterUserName(card)
-            notifyTwitterHashTagReceived(twitterHashTag)
+            outputs.forEach { it.showTwitterHashTag(twitterHashTag) }
         }
     }
 
     private fun notifyCardSelected(card: Card) {
-        for (output in outputs) {
-            output.showCardDetails(card)
-        }
-    }
-
-    private fun notifyTwitterHashTagReceived(twitterHashTag: TwitterHashTag) {
-        for(output in outputs) {
-            output.showTwitterHashTag(twitterHashTag)
-        }
+        outputs.forEach { it.showCardDetails(card) }
     }
 
     override fun getImageForUrl(selectedCard: Card): Bitmap? =
@@ -46,8 +45,13 @@ class ContentDetailsUseCase(
         if (targetCard != currentCard) {
             return
         }
-        for(output in outputs) {
-            output.updateCardImage()
+        outputs.forEach { it.updateCardImage() }
+    }
+
+    override fun requestCardById(cardId: String) {
+        uiScope.launch(errorHandler) {
+            val card = input.requestCardById(cardId)
+            outputs.forEach { it.showCardDetails(card) }
         }
     }
 

@@ -7,51 +7,63 @@ import com.github.grishberg.imageslist.CardSelectedAction
 import com.github.grishberg.imageslist.CardsList
 import com.github.grishberg.imageslist.CardsListInput
 import com.github.grishberg.imageslist.CardsListOutput
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
-class ImageListUseCase(
+class CardListUseCase(
+    private val uiScope: CoroutineScope,
     private val input: CardsListInput,
     private val imagesInput: CardImageGateway
-) : CardsList, CardsListInput.CardsReceivedAction, CardImageGateway.ImageReadyAction {
+) : CardsList, CardImageGateway.ImageReadyAction {
     private val outputs = mutableListOf<CardsListOutput>()
     private val cardSelectedActions = mutableListOf<CardSelectedAction>()
     private val cardsList = mutableListOf<Card>()
     private var isLoading: Boolean = false
 
+    private val errorHandler = CoroutineExceptionHandler { _, exception ->
+        uiScope.launch(Dispatchers.Main) {
+            outputs.forEach { it.showError(exception.message.orEmpty()) }
+        }
+    }
+
     init {
-        input.registerCardsReceivedAction(this)
         imagesInput.registerImageReadyAction(this)
-        requestCardsFirstPage()
     }
 
     override fun onCardSelected(selectedCard: Card) {
-        for (action in cardSelectedActions) {
-            action.invoke(selectedCard)
-        }
+        cardSelectedActions.forEach { it.invoke(selectedCard) }
     }
 
     override fun requestImageByCard(shownCard: Card): Bitmap? =
         imagesInput.requestImageForCard(shownCard)
 
     override fun requestCardsFirstPage() {
-        cardsList.clear()
-        input.requestTopCards(0)
+        uiScope.launch(errorHandler) {
+            val cards = input.requestTopCards(0)
+            cardsList.clear()
+            onCardsReceived(cards)
+        }
     }
 
-    override fun onCardsReceived(cardsPage: List<Card>) {
+    override fun onScrollStateChanged(lastVisibleItemPosition: Int) {
+        if (isLoading || lastVisibleItemPosition < cardsList.size - 1) {
+            return
+        }
+
+        isLoading = true
+        uiScope.launch(errorHandler) {
+            val cards = input.requestTopCards(cardsList.size)
+            onCardsReceived(cards)
+        }
+    }
+
+    private fun onCardsReceived(cardsPage: List<Card>) {
         isLoading = false
-        for (card in cardsPage) {
-            imagesInput.requestImageForCard(card)
-        }
+        cardsPage.forEach { imagesInput.requestImageForCard(it) }
         cardsList.addAll(cardsPage)
-        for (output in outputs) {
-            output.updateCards(cardsList)
-        }
-    }
-
-    override fun onError(message: String) {
-        for (output in outputs) {
-            output.showError(message)
-        }
+        outputs.forEach { it.updateCards(cardsList) }
     }
 
     override fun onImageReadyForCard(targetCard: Card) {
@@ -59,23 +71,10 @@ class ImageListUseCase(
         if (targetItemPos < 0) {
             return
         }
-        for (output in outputs) {
-            output.updateCardByPosition(targetItemPos)
-        }
+        outputs.forEach { it.updateCardByPosition(targetItemPos) }
     }
 
     private fun findCardPosition(targetCard: Card): Int = cardsList.lastIndexOf(targetCard)
-
-    override fun onScrollStateChanged(lastVisibleItemPosition: Int) {
-        if (isLoading) {
-            return
-        }
-
-        if (lastVisibleItemPosition == cardsList.size - 1) {
-            isLoading = true
-            input.requestTopCards(cardsList.size)
-        }
-    }
 
     override fun registerOutput(output: CardsListOutput) {
         outputs.add(output)

@@ -20,17 +20,20 @@ class ApplicationUseCase(
         cardsList.registerCardSelectedAction {
             state.onCardSelected(it)
         }
+        cardsList.requestCardsFirstPage()
     }
 
     /**
      * Is called when user press back.
      */
-    fun onBackPressed(): Boolean =
-        state.onBackPressed()
-
+    fun onBackPressed(): Boolean = state.onBackPressed()
 
     fun registerOutputBounds(output: OutputBounds) {
         outputBounds.add(output)
+    }
+
+    fun onRequestedByDeepLink(id: String) {
+        state.onRequestedByDeepLink(id)
     }
 
     private inner class DetailedState : State {
@@ -41,9 +44,11 @@ class ApplicationUseCase(
         }
 
         private fun notifyShowCardList() {
-            for (bounds in outputBounds) {
-                bounds.showCardsList()
-            }
+            outputBounds.forEach { it.showCardsList() }
+        }
+
+        override fun onRequestedByDeepLink(cardId: String) {
+            contentDetails.requestCardById(cardId)
         }
     }
 
@@ -54,15 +59,21 @@ class ApplicationUseCase(
             notifyShowDetailedInformation()
         }
 
-        private fun notifyShowDetailedInformation() {
-            for (bounds in outputBounds) {
-                bounds.showDetailedInformation()
-            }
+        override fun onRequestedByDeepLink(cardId: String) {
+            state = detailedState
+            contentDetails.requestCardById(cardId)
+            notifyShowDetailedInformation()
         }
+
+        private fun notifyShowDetailedInformation() {
+            outputBounds.forEach { it.showDetailedInformation() }
+        }
+
     }
 
     private interface State {
         fun onBackPressed() = false
         fun onCardSelected(selectedCard: Card) = Unit
+        fun onRequestedByDeepLink(cardId: String)
     }
 }

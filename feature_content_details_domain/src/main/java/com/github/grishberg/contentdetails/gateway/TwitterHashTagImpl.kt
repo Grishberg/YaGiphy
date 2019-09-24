@@ -6,5 +6,4 @@ class TwitterHashTagImpl(
     override val isValid: Boolean,
     override val name: String,
     override val accountUrl: String
-) : TwitterHashTag {
-}
+) : TwitterHashTag

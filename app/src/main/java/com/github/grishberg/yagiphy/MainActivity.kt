@@ -2,6 +2,7 @@ package com.github.grishberg.yagiphy
 
 import android.app.ActivityManager
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
@@ -11,7 +12,8 @@ import com.github.grishberg.contentdetails.gateway.ContentRepository
 import com.github.grishberg.contentdetailspresentation.ContentDetailsFacade
 import com.github.grishberg.giphygateway.CardsListGateway
 import com.github.grishberg.giphygateway.CardsLruImageRepository
-import com.github.grishberg.imagelist.ImageListUseCase
+import com.github.grishberg.giphygateway.api.GiphyApi
+import com.github.grishberg.imagelist.CardListUseCase
 import com.github.grishberg.imageslist.CardsList
 import com.github.grishberg.imageslistpresentation.ImagesListFacade
 import com.github.grishberg.imageslistpresentation.VerticalCardFactory
@@ -42,6 +44,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        checkDeepLink(appUseCase, intent)
+    }
+
     override fun onRetainCustomNonConfigurationInstance(): Any {
         return UseCaseStorage(cardList, contentDetails, appUseCase)
     }
@@ -53,24 +60,41 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun create() {
-        val cardListInput = CardsListGateway(uiScope, API_KEY)
+        val giphyApi = GiphyApi(API_KEY)
+
+        val cardListInput = CardsListGateway(uiScope, giphyApi)
 
         val memClass = getMemoryClassFromActivity()
         val imagesGateway = CardsLruImageRepository.create(uiScope, memClass)
-        cardList = ImageListUseCase(cardListInput, imagesGateway)
+        cardList = CardListUseCase(uiScope, cardListInput, imagesGateway)
 
         val cardFactory = VerticalCardFactory(cardList)
         cardListInput.setCardFactory(cardFactory)
 
-        val contentDetailsInput = ContentRepository.create(uiScope)
+        val contentDetailsInput = ContentRepository.create(uiScope, giphyApi)
         contentDetails = ContentDetailsUseCase(uiScope, imagesGateway, contentDetailsInput)
 
         appUseCase = ApplicationUseCase(cardList, contentDetails)
 
         createViews(cardList, contentDetails, appUseCase)
+        checkDeepLink(appUseCase, intent)
     }
 
+    private fun checkDeepLink(
+        appUseCase: ApplicationUseCase,
+        intent: Intent?
+    ) {
+        if (intent == null) {
+            return
+        }
+        val action = intent.action
+        val data = intent.dataString
 
+        if (Intent.ACTION_VIEW.equals(action) && data != null) {
+            val cardId = data.substring(data.lastIndexOf("/") + 1)
+            appUseCase.onRequestedByDeepLink(cardId)
+        }
+    }
     private fun getMemoryClassFromActivity(): Int {
         val am = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
         return am.memoryClass

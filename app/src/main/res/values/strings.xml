@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">YaGiphy</string>
     <string name="content_description_title">Giphy image</string>
+    <string name="filter_view_http_giphy">Giphy image</string>
+    <string name="filter_view_scheme_gifs">Giphy image</string>
+
+
 </resources>

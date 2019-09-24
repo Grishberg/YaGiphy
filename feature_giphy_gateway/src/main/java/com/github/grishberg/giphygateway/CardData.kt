@@ -2,9 +2,13 @@ package com.github.grishberg.giphygateway
 
 import com.google.gson.annotations.SerializedName
 
-data class Data(
+data class CardListData(
     val data: List<CardData>,
     val pagination: Pagination
+)
+
+data class SingleCardData(
+    val data: CardData
 )
 
 data class CardData(

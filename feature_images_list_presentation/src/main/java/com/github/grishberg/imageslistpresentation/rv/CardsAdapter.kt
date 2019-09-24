@@ -20,12 +20,6 @@ internal class CardsAdapter(
         items.addAll(cards)
     }
 
-    fun pupulateImmediately(cards: List<Card>) {
-        items.clear()
-        items.addAll(cards)
-        notifyDataSetChanged()
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CardViewHolder {
         val view = inflater.inflate(R.layout.card_item, parent, false)
         val vh = CardViewHolder(view)

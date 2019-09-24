@@ -9,11 +9,37 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity"
+                android:launchMode="singleInstance"
+                >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+
+            <intent-filter android:label="@string/filter_view_http_giphy">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <!-- Accepts URIs that begin with "http://giphy.com/gifs/<id>” -->
+                <data
+                        android:host="giphy.com"
+                        android:pathPrefix="/gifs"
+                        android:scheme="https" />
+                <!-- note that the leading "/" is required for pathPrefix-->
+            </intent-filter>
+
+            <intent-filter android:label="@string/filter_view_scheme_gifs">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <!-- Accepts URIs that begin with "giphy://gifs/<id>” -->
+                <data
+                        android:host="giphy"
+                        android:scheme="gifs" />
             </intent-filter>
         </activity>
     </application>

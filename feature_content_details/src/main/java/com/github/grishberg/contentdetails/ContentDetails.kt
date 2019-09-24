@@ -12,4 +12,6 @@ interface ContentDetails {
      * Is called when user clicked by twitter account button
      */
     fun onTwitterHashTagClicked()
+
+    fun requestCardById(cardId: String)
 }
