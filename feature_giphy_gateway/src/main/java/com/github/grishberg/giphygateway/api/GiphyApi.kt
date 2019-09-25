@@ -56,8 +56,8 @@ class GiphyApi(
                     cardData.id,
                     cardData.images.previewImage.url,
                     cardData.username,
-                    cardData.user.displayName,
-                    cardData.user.profileUrl
+                    cardData.user?.displayName,
+                    cardData.user?.profileUrl
                 )
             )
         }

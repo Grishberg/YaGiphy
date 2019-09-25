@@ -38,14 +38,20 @@ class ContentDetailsFacade(
         val userNameView = rootView.findViewById<TextView>(R.id.userName)
         val fullNameView = rootView.findViewById<TextView>(R.id.fullUserName)
         val renderer =
-            GiphyContentRenderer(imageView, twitterHashTagView, userNameView, fullNameView)
+            GiphyContentRenderer(
+                activity,
+                imageView,
+                twitterHashTagView,
+                userNameView,
+                fullNameView
+            )
 
         viewModel.showError.observe(activity, Observer<String> { message ->
             Snackbar.make(rootView, message, Snackbar.LENGTH_LONG).show()
         })
 
         viewModel.content.observe(activity, Observer<CardInfo> { cardInfo ->
-            renderer.hideTwitterHashTag()
+            renderer.hideTitles()
             cardInfo.render(renderer)
         })
 

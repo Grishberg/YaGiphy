@@ -37,8 +37,14 @@ class ContentDetailsUseCase(
     private fun requestTwitterHashTag(card: Card) {
         uiScope.launch(errorHandler) {
             currentCardTwitterHashTag = input.requestTwitterUserName(card)
-            outputs.forEach { it.showTwitterHashTag(currentCardTwitterHashTag) }
+            if (currentCardTwitterHashTag != TwitterHashTag.EMPTY_HASHTAG) {
+                showTwitterHasTag()
+            }
         }
+    }
+
+    private fun showTwitterHasTag() {
+        outputs.forEach { it.showTwitterHashTag(currentCardTwitterHashTag) }
     }
 
     private fun showCardDetails(cardInfo: CardInfo) {

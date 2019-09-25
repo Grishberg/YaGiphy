@@ -9,7 +9,7 @@ internal class CardInfoImpl(
 ) : CardInfo {
 
     override fun render(renderer: CardInfoRenderer) {
-        renderer.showUserName(userName)
+        renderer.showUserName(userName, displayUserName != null)
 
         displayUserName?.let { name -> renderer.showFullUserName(name) }
     }

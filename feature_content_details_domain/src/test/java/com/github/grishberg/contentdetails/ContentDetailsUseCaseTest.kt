@@ -1,10 +1,7 @@
 package com.github.grishberg.contentdetails
 
 import com.github.grishberg.contentdetails.exceptions.ContentDetailsInputException
-import com.github.grishberg.core.Card
-import com.github.grishberg.core.CardImageGateway
-import com.github.grishberg.core.CoroutineDispatchers
-import com.github.grishberg.core.ImageHolder
+import com.github.grishberg.core.*
 import com.nhaarman.mockitokotlin2.*
 import org.junit.Test
 
@@ -14,10 +11,14 @@ class ContentDetailsUseCaseTest {
     private val coroutineContextProvider = TestContextProvider()
     private val twitterTag = ValidTwitterHashTag()
     private val downloadedImage = mock<ImageHolder>()
-    private val card = mock<Card>()
+    private val cardInfo = mock<CardInfo>()
+    private val card = mock<Card> {
+        on { provideCardInfo() } doReturn cardInfo
+    }
     private val imageInput = mock<CardImageGateway>()
     private val contentDetailsInput = mock<ContentDetailsInput> {
         onBlocking { requestTwitterUserName(any()) } doReturn twitterTag
+        onBlocking { requestCardById(any()) } doReturn card
     }
 
     private val twitterOutput = mock<UserProfileOutput>()
@@ -29,7 +30,7 @@ class ContentDetailsUseCaseTest {
     fun `notify output card select event when card selected`() {
         underTest.onCardSelected(card)
 
-        verify(contentDetailsOutput).showCardDetails(card)
+        verify(contentDetailsOutput).showCardDetails(cardInfo)
     }
 
     @Test
@@ -43,8 +44,7 @@ class ContentDetailsUseCaseTest {
     fun `notify output image ready when image downloaded`() {
         underTest.onCardSelected(card)
 
-        whenever(imageInput.requestImageForCard(card)) doReturn downloadedImage
-        underTest.onImageReadyForCard(card)
+        whenReceivedImageForCard()
 
         verify(contentDetailsOutput).updateCardImage(downloadedImage)
     }
@@ -71,6 +71,16 @@ class ContentDetailsUseCaseTest {
         underTest.requestCardById("1234")
 
         verify(contentDetailsOutput).showError("fail")
+    }
+
+    private fun whenReceivedImageForCard() {
+        whenever(imageInput.getImageOrEmptyHolder(card)) doReturn downloadedImage
+        underTest.onImageReadyForCard(card)
+    }
+
+    private fun whenReceivedCardWithoutImage() {
+        whenever(imageInput.requestImageForCard(card)) doReturn ImageHolder.EMPTY
+        underTest.requestCardById("id")
     }
 
     private fun createContentDetails(contentDetails: ContentDetailsInput = contentDetailsInput) =
