@@ -1,9 +1,6 @@
 package com.github.grishberg.contentdetails
 
-import com.github.grishberg.core.Card
-import com.github.grishberg.core.CardImageGateway
-import com.github.grishberg.core.CoroutineDispatchers
-import com.github.grishberg.core.ImageHolder
+import com.github.grishberg.core.*
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -17,7 +14,7 @@ class ContentDetailsUseCase(
     private var currentCard: Card? = null
     private var currentCardTwitterHashTag: TwitterHashTag = TwitterHashTag.EMPTY_HASHTAG
     private val outputs = mutableListOf<ContentDetailsOutput>()
-    private val twitterOutputs = mutableListOf<TwitterOutputBounds>()
+    private val userProfileOutputs = mutableListOf<UserProfileOutput>()
     private val errorHandler = CoroutineExceptionHandler { _, exception ->
         uiScope.launch(coroutineContextProvider.main) {
             outputs.forEach { it.showError(exception.message.orEmpty()) }
@@ -32,7 +29,7 @@ class ContentDetailsUseCase(
         currentCard = card
         currentCardTwitterHashTag = TwitterHashTag.EMPTY_HASHTAG
         showStub()
-        showCardDetails(card)
+        showCardDetails(card.provideCardInfo())
         requestImageForCard(card)
         requestTwitterHashTag(card)
     }
@@ -44,8 +41,8 @@ class ContentDetailsUseCase(
         }
     }
 
-    private fun showCardDetails(card: Card) {
-        outputs.forEach { it.showCardDetails(card) }
+    private fun showCardDetails(cardInfo: CardInfo) {
+        outputs.forEach { it.showCardDetails(cardInfo) }
     }
 
     override fun onImageReadyForCard(targetCard: Card) {
@@ -67,7 +64,7 @@ class ContentDetailsUseCase(
         uiScope.launch(errorHandler) {
             val card = input.requestCardById(cardId)
             currentCard = card
-            outputs.forEach { it.showCardDetails(card) }
+            outputs.forEach { it.showCardDetails(card.provideCardInfo()) }
             requestImageForCard(card)
         }
     }
@@ -83,8 +80,10 @@ class ContentDetailsUseCase(
         }
     }
 
-    override fun onTwitterHashTagClicked() {
-        twitterOutputs.forEach { it.showTwitterScreen(currentCardTwitterHashTag) }
+    override fun onUserNameClicked() {
+        currentCard?.let { card ->
+            userProfileOutputs.forEach { it.showUserProfileScreen(card) }
+        }
     }
 
     override fun registerOutput(output: ContentDetailsOutput) {
@@ -95,7 +94,7 @@ class ContentDetailsUseCase(
         outputs.remove(output)
     }
 
-    override fun registerTwitterOutput(output: TwitterOutputBounds) {
-        twitterOutputs.add(output)
+    override fun registerUserProfileOutput(output: UserProfileOutput) {
+        userProfileOutputs.add(output)
     }
 }

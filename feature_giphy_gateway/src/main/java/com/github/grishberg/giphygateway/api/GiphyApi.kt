@@ -2,8 +2,6 @@ package com.github.grishberg.giphygateway.api
 
 import androidx.annotation.WorkerThread
 import com.github.grishberg.core.Card
-import com.github.grishberg.giphygateway.CardListData
-import com.github.grishberg.giphygateway.SingleCardData
 import com.github.grishberg.imageslist.CardFactory
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -57,7 +55,9 @@ class GiphyApi(
                 cardFactory.createCard(
                     cardData.id,
                     cardData.images.previewImage.url,
-                    cardData.username
+                    cardData.username,
+                    cardData.user.displayName,
+                    cardData.user.profileUrl
                 )
             )
         }
@@ -88,12 +88,13 @@ class GiphyApi(
         )
         val stream = body.charStream()
         val cardDataType = object : TypeToken<SingleCardData>() {}.type
-        val cardData = gson.fromJson<SingleCardData>(stream, cardDataType)
-
+        val cardData = gson.fromJson<SingleCardData>(stream, cardDataType).data
         return cardFactory.createCard(
-            cardData.data.id,
-            cardData.data.images.previewImage.url,
-            cardData.data.username
+            cardData.id,
+            cardData.images.previewImage.url,
+            cardData.username,
+            cardData.user?.displayName,
+            cardData.user?.profileUrl
         )
     }
 }

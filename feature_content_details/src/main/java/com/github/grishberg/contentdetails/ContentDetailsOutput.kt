@@ -1,6 +1,6 @@
 package com.github.grishberg.contentdetails
 
-import com.github.grishberg.core.Card
+import com.github.grishberg.core.CardInfo
 import com.github.grishberg.core.ImageHolder
 
 interface ContentDetailsOutput {
@@ -12,7 +12,7 @@ interface ContentDetailsOutput {
     /**
      * Is call when user clicked to card.
      */
-    fun showCardDetails(card: Card)
+    fun showCardDetails(cardInfo: CardInfo)
 
     /**
      * Is called when image for card received.

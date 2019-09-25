@@ -1,9 +1,7 @@
 package com.github.grishberg.imageslistpresentation
 
-import com.github.grishberg.core.Card
-import com.github.grishberg.core.CardRenderer
-import com.github.grishberg.core.ImageHolder
-import com.github.grishberg.core.ImagesProvider
+import com.github.grishberg.contentdetails.CardInfoFactory
+import com.github.grishberg.core.*
 import com.github.grishberg.imageslist.CardsList
 
 /**
@@ -14,10 +12,14 @@ internal class VerticalListCard(
     private val id: String,
     override val imageUrl: String,
     private val userName: String,
+    private val displayName: String?,
+    private val profileUrl: String?,
     private val imagesProvider: ImagesProvider,
-    private val cardsList: CardsList
+    private val cardsList: CardsList,
+    private val cardInfoFactory: CardInfoFactory
 ) : Card {
     private var hasImage = false
+    private val cardInfo: CardInfo by lazy { cardInfoFactory.create(userName, displayName) }
 
     override val twitterUserName: String
         get() = userName
@@ -39,6 +41,14 @@ internal class VerticalListCard(
 
     override fun handleClick() {
         cardsList.onCardSelected(this)
+    }
+
+    override fun provideCardInfo(): CardInfo {
+        return cardInfo
+    }
+
+    override fun openUserProfile(openUrlDelegate: (String) -> Unit) {
+        profileUrl?.let { openUrlDelegate(it) }
     }
 
     override fun isContentTheSame(card: Card): Boolean {

@@ -7,4 +7,6 @@ interface Card {
     fun render(renderer: CardRenderer)
     fun isContentTheSame(card: Card): Boolean
     fun handleClick()
+    fun provideCardInfo(): CardInfo
+    fun openUserProfile(openUrlDelegate: (String) -> Unit)
 }

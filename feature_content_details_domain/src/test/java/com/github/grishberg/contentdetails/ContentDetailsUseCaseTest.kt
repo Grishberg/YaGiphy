@@ -20,7 +20,7 @@ class ContentDetailsUseCaseTest {
         onBlocking { requestTwitterUserName(any()) } doReturn twitterTag
     }
 
-    private val twitterOutput = mock<TwitterOutputBounds>()
+    private val twitterOutput = mock<UserProfileOutput>()
     private val contentDetailsOutput = mock<ContentDetailsOutput>()
 
     private val underTest = createContentDetails()
@@ -76,7 +76,7 @@ class ContentDetailsUseCaseTest {
     private fun createContentDetails(contentDetails: ContentDetailsInput = contentDetailsInput) =
         ContentDetailsUseCase(scope, coroutineContextProvider, imageInput, contentDetails).apply {
             registerOutput(contentDetailsOutput)
-            registerTwitterOutput(twitterOutput)
+            registerUserProfileOutput(twitterOutput)
         }
 
     private class ValidTwitterHashTag : TwitterHashTag {

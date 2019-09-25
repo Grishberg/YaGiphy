@@ -13,7 +13,7 @@ import androidx.lifecycle.ViewModelProviders
 import com.github.grishberg.contentderailspresentation.R
 import com.github.grishberg.contentdetails.ContentDetails
 import com.github.grishberg.contentdetails.TwitterHashTag
-import com.github.grishberg.core.Card
+import com.github.grishberg.core.CardInfo
 import com.github.grishberg.core.ImageHolder
 import com.google.android.material.snackbar.Snackbar
 
@@ -35,14 +35,18 @@ class ContentDetailsFacade(
 
         val imageView = rootView.findViewById<ImageView>(R.id.contentDetailsImage)
         val twitterHashTagView = rootView.findViewById<TextView>(R.id.twitterHashTag)
-        val renderer = GiphyContentRenderer(imageView, twitterHashTagView)
+        val userNameView = rootView.findViewById<TextView>(R.id.userName)
+        val fullNameView = rootView.findViewById<TextView>(R.id.fullUserName)
+        val renderer =
+            GiphyContentRenderer(imageView, twitterHashTagView, userNameView, fullNameView)
 
         viewModel.showError.observe(activity, Observer<String> { message ->
             Snackbar.make(rootView, message, Snackbar.LENGTH_LONG).show()
         })
 
-        viewModel.content.observe(activity, Observer<Card> { card ->
+        viewModel.content.observe(activity, Observer<CardInfo> { cardInfo ->
             renderer.hideTwitterHashTag()
+            cardInfo.render(renderer)
         })
 
         viewModel.twitterHashTag.observe(activity, Observer<TwitterHashTag> { twitterHashTag ->
@@ -59,8 +63,8 @@ class ContentDetailsFacade(
             }
         })
 
-        twitterHashTagView.setOnClickListener {
-            contentDetails.onTwitterHashTagClicked()
+        userNameView.setOnClickListener {
+            contentDetails.onUserNameClicked()
         }
 
         view = rootView

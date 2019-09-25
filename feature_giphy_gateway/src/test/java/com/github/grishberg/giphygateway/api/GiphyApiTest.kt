@@ -11,8 +11,6 @@ import org.junit.Test
 
 private const val SINGLE_CARD_IMAGE_URL = "https://media0.giphy.com/media/3gNtpuuBVDnpzIaZTe/" +
         "480w_s.jpg?cid=9baa1adff90362481d89c6f9ef8dc660d149a6f628b1d1fe&rid=480w_s.jpg"
-private const val SINGLE_CARD_URL = "https://giphy.com/gifs/" +
-        "grandedame-astrostyle-astrotwins-3gNtpuuBVDnpzIaZTe"
 
 class GiphyApiTest {
     private val fakeInterceptor = FakeInterceptor()
@@ -40,8 +38,8 @@ class GiphyApiTest {
         underTest.getCardById("id")
 
         verify(cardFactory).createCard(
-            "3gNtpuuBVDnpzIaZTe", SINGLE_CARD_URL,
-            SINGLE_CARD_IMAGE_URL, "grandedame"
+            "3gNtpuuBVDnpzIaZTe",
+            SINGLE_CARD_IMAGE_URL, "grandedame", "Grande Dame", "https://giphy.com/grandedame/"
         )
     }
 }

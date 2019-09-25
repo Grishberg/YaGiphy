@@ -4,15 +4,17 @@ import com.github.grishberg.core.Card
 
 interface ContentDetails {
     fun onCardSelected(card: Card)
+
     /**
-     * Is called when user clicked by twitter account button
+     * Is called when user clicked by user name.
      */
-    fun onTwitterHashTagClicked()
+    fun onUserNameClicked()
 
     fun requestCardById(cardId: String)
 
     fun registerOutput(output: ContentDetailsOutput)
     fun unregisterOutput(output: ContentDetailsOutput)
 
-    fun registerTwitterOutput(output: TwitterOutputBounds)
+    fun registerUserProfileOutput(output: UserProfileOutput)
+
 }

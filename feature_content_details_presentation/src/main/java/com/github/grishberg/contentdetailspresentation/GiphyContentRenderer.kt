@@ -4,12 +4,15 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import com.github.grishberg.contentderailspresentation.R
+import com.github.grishberg.core.CardInfoRenderer
 import com.github.grishberg.core.ImageHolder
 
 class GiphyContentRenderer(
     private val imageView: ImageView,
-    private val twitterHashTitle: TextView
-) {
+    private val twitterHashTitle: TextView,
+    private val userNameView: TextView,
+    private val userFullNameView: TextView
+) : CardInfoRenderer {
     fun showDefaultBackground() {
         imageView.setImageResource(R.drawable.ic_giphy_icon)
     }
@@ -25,5 +28,10 @@ class GiphyContentRenderer(
 
     fun hideTwitterHashTag() {
         twitterHashTitle.visibility = View.GONE
+    }
+
+    override fun showUserName(realName: String, userName: String) {
+        userNameView.text = userName
+        userFullNameView.text = realName
     }
 }

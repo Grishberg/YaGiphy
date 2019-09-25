@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.github.grishberg.contentdetails.ContentDetails
 import com.github.grishberg.contentdetails.ContentDetailsUseCase
 import com.github.grishberg.contentdetails.gateway.ContentRepository
+import com.github.grishberg.contentdetailspresentation.CardInfoFactoryImpl
 import com.github.grishberg.contentdetailspresentation.ContentDetailsFacade
 import com.github.grishberg.core.CoroutineDispatchers
 import com.github.grishberg.giphygateway.CardsListGateway
@@ -21,6 +22,7 @@ import com.github.grishberg.imageslistpresentation.VerticalCardFactory
 import com.github.grishberg.yagiphy.BuildConfig.API_KEY
 import com.github.grishberg.yagiphy.domain.ApplicationUseCase
 import com.github.grishberg.yagiphy.presentation.Router
+import com.github.grishberg.yagiphy.presentation.UserProfileScreenDelegate
 import kotlinx.coroutines.Dispatchers
 
 
@@ -66,7 +68,7 @@ class MainActivity : AppCompatActivity() {
             CardsLruImageRepository.create(uiScope, coroutineContextProvider, memClass)
         cardList = CardListUseCase(uiScope, cardListInput, imagesGateway)
 
-        val cardFactory = VerticalCardFactory(imagesGateway, cardList)
+        val cardFactory = VerticalCardFactory(imagesGateway, cardList, CardInfoFactoryImpl())
         cardListInput.setCardFactory(cardFactory)
 
         val contentDetailsInput =
@@ -77,6 +79,8 @@ class MainActivity : AppCompatActivity() {
             imagesGateway,
             contentDetailsInput
         )
+
+        contentDetails.registerUserProfileOutput(UserProfileScreenDelegate(this.applicationContext))
 
         appUseCase =
             ApplicationUseCase(cardList, contentDetails)

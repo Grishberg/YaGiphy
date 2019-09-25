@@ -6,15 +6,15 @@ import androidx.lifecycle.ViewModel
 import com.github.grishberg.contentdetails.ContentDetails
 import com.github.grishberg.contentdetails.ContentDetailsOutput
 import com.github.grishberg.contentdetails.TwitterHashTag
-import com.github.grishberg.core.Card
+import com.github.grishberg.core.CardInfo
 import com.github.grishberg.core.ImageHolder
 import com.github.grishberg.core.SingleLiveEvent
 
 class ContentDetailsViewModel(
     contentDetails: ContentDetails
 ) : ViewModel(), ContentDetailsOutput {
-    private val _content = MutableLiveData<Card>()
-    val content: LiveData<Card>
+    private val _content = MutableLiveData<CardInfo>()
+    val content: LiveData<CardInfo>
         get() = _content
 
     private val _needInvalidateImage = SingleLiveEvent<ImageHolder>()
@@ -41,8 +41,8 @@ class ContentDetailsViewModel(
         _twitterHashTag.value = tag
     }
 
-    override fun showCardDetails(card: Card) {
-        _content.value = card
+    override fun showCardDetails(cardInfo: CardInfo) {
+        _content.value = cardInfo
     }
 
     override fun updateCardImage(image: ImageHolder) {

@@ -1,4 +1,4 @@
-package com.github.grishberg.giphygateway
+package com.github.grishberg.giphygateway.api
 
 import com.google.gson.annotations.SerializedName
 
@@ -18,9 +18,18 @@ data class CardData(
     val type: String,
     val id: String,
     val url: String,
-    val username: String,
     val title: String,
+    val user: User?,
+    val username: String,
     val images: Images
+)
+
+data class User(
+    val username: String,
+    @SerializedName("display_name")
+    val displayName: String,
+    @SerializedName("profile_url")
+    val profileUrl: String
 )
 
 data class Images(
