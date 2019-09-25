@@ -1,22 +1,21 @@
 package com.github.grishberg.contentdetailspresentation
 
-import android.graphics.Bitmap
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import com.github.grishberg.contentderailspresentation.R
-import com.github.grishberg.core.CardRenderer
+import com.github.grishberg.core.ImageHolder
 
 class GiphyContentRenderer(
     private val imageView: ImageView,
     private val twitterHashTitle: TextView
-) : CardRenderer {
-    override fun showDefaultBackground() {
-        imageView.setImageResource(R.drawable.ic_launcher_background)
+) {
+    fun showDefaultBackground() {
+        imageView.setImageResource(R.drawable.ic_giphy_icon)
     }
 
-    override fun showTargetBitmap(bitmap: Bitmap) {
-        imageView.setImageBitmap(bitmap)
+    fun showTargetBitmap(imageHolder: ImageHolder) {
+        imageView.setImageBitmap(imageHolder.bitmap)
     }
 
     fun showTwitterHashTitle(twitterName: String) {
@@ -26,9 +25,5 @@ class GiphyContentRenderer(
 
     fun hideTwitterHashTag() {
         twitterHashTitle.visibility = View.GONE
-    }
-
-    override fun animate() {
-        /* not used */
     }
 }

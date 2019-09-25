@@ -38,10 +38,6 @@ class ImagesListViewModel(
         _updatedItemPosition.value = position
     }
 
-    override fun onCleared() {
-        cardsList.unregisterOutput(this)
-    }
-
     override fun showError(message: String) {
         _onError.value = message
     }

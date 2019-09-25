@@ -1,8 +1,8 @@
 package com.github.grishberg.imagelist
 
-import android.graphics.Bitmap
 import com.github.grishberg.core.Card
 import com.github.grishberg.core.CardImageGateway
+import com.github.grishberg.core.ImageHolder
 import com.github.grishberg.imageslist.CardSelectedAction
 import com.github.grishberg.imageslist.CardsList
 import com.github.grishberg.imageslist.CardsListInput
@@ -36,7 +36,7 @@ class CardListUseCase(
         cardSelectedActions.forEach { it.invoke(selectedCard) }
     }
 
-    override fun requestImageByCard(shownCard: Card): Bitmap? =
+    override fun requestImageByCard(shownCard: Card): ImageHolder =
         imagesInput.requestImageForCard(shownCard)
 
     override fun requestCardsFirstPage() {
@@ -74,21 +74,17 @@ class CardListUseCase(
         outputs.forEach { it.updateCardByPosition(targetItemPos) }
     }
 
+    override fun onImageRequestError(message: String) {
+        outputs.forEach {  }
+    }
+
     private fun findCardPosition(targetCard: Card): Int = cardsList.lastIndexOf(targetCard)
 
     override fun registerOutput(output: CardsListOutput) {
         outputs.add(output)
     }
 
-    override fun unregisterOutput(output: CardsListOutput) {
-        outputs.remove(output)
-    }
-
     override fun registerCardSelectedAction(action: CardSelectedAction) {
         cardSelectedActions.add(action)
-    }
-
-    override fun unregisterCardSelectedAction(action: CardSelectedAction) {
-        cardSelectedActions.remove(action)
     }
 }

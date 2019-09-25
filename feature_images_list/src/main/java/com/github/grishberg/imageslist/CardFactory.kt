@@ -5,7 +5,6 @@ import com.github.grishberg.core.Card
 interface CardFactory {
     fun createCard(
         id: String,
-        url: String,
         imageUrl: String,
         userName: String
     ): Card
@@ -13,7 +12,6 @@ interface CardFactory {
     object STUB : CardFactory {
         override fun createCard(
             id: String,
-            url: String,
             imageUrl: String,
             userName: String
         ): Card {

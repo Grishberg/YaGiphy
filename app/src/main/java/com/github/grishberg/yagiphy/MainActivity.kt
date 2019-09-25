@@ -10,6 +10,7 @@ import com.github.grishberg.contentdetails.ContentDetails
 import com.github.grishberg.contentdetails.ContentDetailsUseCase
 import com.github.grishberg.contentdetails.gateway.ContentRepository
 import com.github.grishberg.contentdetailspresentation.ContentDetailsFacade
+import com.github.grishberg.core.CoroutineDispatchers
 import com.github.grishberg.giphygateway.CardsListGateway
 import com.github.grishberg.giphygateway.CardsLruImageRepository
 import com.github.grishberg.giphygateway.api.GiphyApi
@@ -17,9 +18,10 @@ import com.github.grishberg.imagelist.CardListUseCase
 import com.github.grishberg.imageslist.CardsList
 import com.github.grishberg.imageslistpresentation.ImagesListFacade
 import com.github.grishberg.imageslistpresentation.VerticalCardFactory
+import com.github.grishberg.yagiphy.BuildConfig.API_KEY
 import com.github.grishberg.yagiphy.domain.ApplicationUseCase
 import com.github.grishberg.yagiphy.presentation.Router
-import com.github.grishberg.yagiphy.BuildConfig.API_KEY
+import kotlinx.coroutines.Dispatchers
 
 
 /**
@@ -53,19 +55,28 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun create() {
+        val coroutineContextProvider = CoroutineDispatchersImpl()
+
         val giphyApi = GiphyApi(API_KEY)
 
-        val cardListInput = CardsListGateway(uiScope, giphyApi)
+        val cardListInput = CardsListGateway(uiScope, coroutineContextProvider, giphyApi)
 
         val memClass = getMemoryClassFromActivity()
-        val imagesGateway = CardsLruImageRepository.create(uiScope, memClass)
+        val imagesGateway =
+            CardsLruImageRepository.create(uiScope, coroutineContextProvider, memClass)
         cardList = CardListUseCase(uiScope, cardListInput, imagesGateway)
 
-        val cardFactory = VerticalCardFactory(cardList)
+        val cardFactory = VerticalCardFactory(imagesGateway, cardList)
         cardListInput.setCardFactory(cardFactory)
 
-        val contentDetailsInput = ContentRepository.create(uiScope, giphyApi)
-        contentDetails = ContentDetailsUseCase(uiScope, imagesGateway, contentDetailsInput)
+        val contentDetailsInput =
+            ContentRepository.create(uiScope, coroutineContextProvider, giphyApi)
+        contentDetails = ContentDetailsUseCase(
+            uiScope,
+            coroutineContextProvider,
+            imagesGateway,
+            contentDetailsInput
+        )
 
         appUseCase =
             ApplicationUseCase(cardList, contentDetails)
@@ -89,6 +100,7 @@ class MainActivity : AppCompatActivity() {
             appUseCase.onRequestedByDeepLink(cardId)
         }
     }
+
     private fun getMemoryClassFromActivity(): Int {
         val am = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
         return am.memoryClass
@@ -144,4 +156,9 @@ class MainActivity : AppCompatActivity() {
         val contentDetails: ContentDetails,
         val appUseCase: ApplicationUseCase
     )
+
+    private class CoroutineDispatchersImpl : CoroutineDispatchers {
+        override val main = Dispatchers.Main
+        override val io = Dispatchers.IO
+    }
 }

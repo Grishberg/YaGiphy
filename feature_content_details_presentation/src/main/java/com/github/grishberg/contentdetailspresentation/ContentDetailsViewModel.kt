@@ -1,6 +1,5 @@
 package com.github.grishberg.contentdetailspresentation
 
-import android.graphics.Bitmap
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,6 +7,7 @@ import com.github.grishberg.contentdetails.ContentDetails
 import com.github.grishberg.contentdetails.ContentDetailsOutput
 import com.github.grishberg.contentdetails.TwitterHashTag
 import com.github.grishberg.core.Card
+import com.github.grishberg.core.ImageHolder
 import com.github.grishberg.core.SingleLiveEvent
 
 class ContentDetailsViewModel(
@@ -17,8 +17,8 @@ class ContentDetailsViewModel(
     val content: LiveData<Card>
         get() = _content
 
-    private val _needInvalidateImage = SingleLiveEvent<Bitmap>()
-    val needInvalidateImage: LiveData<Bitmap>
+    private val _needInvalidateImage = SingleLiveEvent<ImageHolder>()
+    val needInvalidateImage: LiveData<ImageHolder>
         get() = _needInvalidateImage
 
     private val _showError = SingleLiveEvent<String>()
@@ -28,6 +28,10 @@ class ContentDetailsViewModel(
     private val _twitterHashTag = MutableLiveData<TwitterHashTag>()
     val twitterHashTag: LiveData<TwitterHashTag>
         get() = _twitterHashTag
+
+    private val _showStub = SingleLiveEvent<Boolean>()
+    val showStub: LiveData<Boolean>
+        get() = _showStub
 
     init {
         contentDetails.registerOutput(this)
@@ -41,8 +45,13 @@ class ContentDetailsViewModel(
         _content.value = card
     }
 
-    override fun updateCardImage(image: Bitmap) {
+    override fun updateCardImage(image: ImageHolder) {
+        _showStub.value = false
         _needInvalidateImage.value = image
+    }
+
+    override fun showStubImage() {
+        _showStub.value = true
     }
 
     override fun showError(message: String) {

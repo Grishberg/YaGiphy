@@ -1,7 +1,7 @@
 package com.github.grishberg.contentdetails
 
-import android.graphics.Bitmap
 import com.github.grishberg.core.Card
+import com.github.grishberg.core.ImageHolder
 
 interface ContentDetailsOutput {
     /**
@@ -17,10 +17,15 @@ interface ContentDetailsOutput {
     /**
      * Is called when image for card received.
      */
-    fun updateCardImage(image: Bitmap)
+    fun updateCardImage(image: ImageHolder)
 
     /**
      * Is called when error happens.
      */
     fun showError(message: String)
+
+    /**
+     * Is called when need to show stub image.
+     */
+    fun showStubImage()
 }

@@ -1,11 +1,11 @@
 package com.github.grishberg.imageslistpresentation.rv
 
-import android.graphics.Bitmap
 import android.view.View
 import android.view.animation.AlphaAnimation
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.github.grishberg.core.CardRenderer
+import com.github.grishberg.core.ImageHolder
 import com.github.grishberg.imageslistpresentation.R
 
 private const val FADE_DURATION = 1000
@@ -21,9 +21,9 @@ internal class CardViewHolder(rootView: View) : RecyclerView.ViewHolder(rootView
     /**
      * Show bitmap with animation
      */
-    override fun showTargetBitmap(bitmap: Bitmap) {
+    override fun showTargetBitmap(imageHolder: ImageHolder) {
         image.visibility = View.VISIBLE
-        image.setImageBitmap(bitmap)
+        image.setImageBitmap(imageHolder.bitmap)
     }
 
     override fun animate() {

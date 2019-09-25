@@ -3,8 +3,7 @@ package com.github.grishberg.giphygateway
 import android.graphics.Bitmap
 import android.util.LruCache
 import androidx.annotation.MainThread
-import com.github.grishberg.core.Card
-import com.github.grishberg.core.CardImageGateway
+import com.github.grishberg.core.*
 import com.github.grishberg.giphygateway.api.ImageDownloader
 import kotlinx.coroutines.*
 import okhttp3.OkHttpClient
@@ -14,28 +13,36 @@ import okhttp3.OkHttpClient
  */
 class CardsLruImageRepository(
     private val uiScope: CoroutineScope,
+    private val coroutineContextProvider: CoroutineDispatchers,
     private val imageDownloader: ImageDownloader,
     private val lruCache: LruCache<String, Bitmap>
 ) : CardImageGateway {
     private val actions = mutableListOf<CardImageGateway.ImageReadyAction>()
     private val errorHandler = CoroutineExceptionHandler { _, exception ->
         uiScope.launch(Dispatchers.Main) {
-            actions.forEach { it.onError(exception.message.orEmpty()) }
+            actions.forEach { it.onImageRequestError(exception.message.orEmpty()) }
         }
     }
 
-    override fun requestImageForCard(card: Card): Bitmap? {
+    override fun requestImageForCard(card: Card): ImageHolder {
+        val imageHolder = getImageOrEmptyHolder(card)
+        if (imageHolder == ImageHolder.EMPTY) {
+            downloadImageFromNetwork(card, card.imageUrl)
+        }
+        return imageHolder
+    }
+
+    override fun getImageOrEmptyHolder(card: Card): ImageHolder {
         val bitmapFromCache = lruCache.get(card.imageUrl)
         if (bitmapFromCache != null) {
-            return bitmapFromCache
+            return BitmapHolder(bitmapFromCache)
         }
-        downloadImageFromNetwork(card, card.imageUrl)
-        return null
+        return ImageHolder.EMPTY
     }
 
     private fun downloadImageFromNetwork(card: Card, url: String) =
         uiScope.launch(errorHandler) {
-            val task = async(Dispatchers.IO) {
+            val task = async(coroutineContextProvider.io) {
                 imageDownloader.downloadImage(url)
             }
             val bitmap = task.await()
@@ -61,13 +68,19 @@ class CardsLruImageRepository(
     companion object {
         fun create(
             uiScope: CoroutineScope,
+            coroutineContextProvider: CoroutineDispatchers,
             memClass: Int
         ): CardImageGateway {
             val okHttpClient = OkHttpClient()
             val imageDownloader = ImageDownloader(okHttpClient)
             val cacheSize = 1024 * 1024 * memClass / 8
             val bitmapCache = LruCache<String, Bitmap>(cacheSize)
-            return CardsLruImageRepository(uiScope, imageDownloader, bitmapCache)
+            return CardsLruImageRepository(
+                uiScope,
+                coroutineContextProvider,
+                imageDownloader,
+                bitmapCache
+            )
         }
     }
 }

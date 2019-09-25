@@ -1,22 +1,20 @@
 package com.github.grishberg.imageslist
 
-import android.graphics.Bitmap
 import com.github.grishberg.core.Card
+import com.github.grishberg.core.ImageHolder
 
 typealias CardSelectedAction = (Card) -> Unit
 
 interface CardsList {
     fun requestCardsFirstPage()
     fun onCardSelected(selectedCard: Card)
-    fun requestImageByCard(shownCard: Card): Bitmap?
+    fun requestImageByCard(shownCard: Card): ImageHolder
     /**
      * Is called when card list scrolled.
      */
     fun onScrollStateChanged(lastVisibleItemPosition: Int)
 
     fun registerOutput(output: CardsListOutput)
-    fun unregisterOutput(output: CardsListOutput)
 
     fun registerCardSelectedAction(action: CardSelectedAction)
-    fun unregisterCardSelectedAction(action: CardSelectedAction)
 }

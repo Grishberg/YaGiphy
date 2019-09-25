@@ -22,7 +22,7 @@ class GiphyApi(
     private val client: OkHttpClient,
     internal var cardFactory: CardFactory = CardFactory.STUB
 ) {
-    constructor(apiKey: String): this(apiKey, OkHttpClient())
+    constructor(apiKey: String) : this(apiKey, OkHttpClient())
 
     private val gson: Gson
 
@@ -56,7 +56,6 @@ class GiphyApi(
             result.add(
                 cardFactory.createCard(
                     cardData.id,
-                    cardData.url,
                     cardData.images.previewImage.url,
                     cardData.username
                 )
@@ -93,7 +92,6 @@ class GiphyApi(
 
         return cardFactory.createCard(
             cardData.data.id,
-            cardData.data.url,
             cardData.data.images.previewImage.url,
             cardData.data.username
         )

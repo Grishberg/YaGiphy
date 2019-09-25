@@ -1,16 +1,17 @@
 package com.github.grishberg.giphygateway
 
 import com.github.grishberg.core.Card
+import com.github.grishberg.core.CoroutineDispatchers
 import com.github.grishberg.giphygateway.api.GiphyApi
 import com.github.grishberg.imageslist.CardFactory
 import com.github.grishberg.imageslist.CardsListInput
 import com.github.grishberg.imageslist.exceptions.CardListInputException
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 
 class CardsListGateway(
     private val uiScope: CoroutineScope,
+    private val coroutineContextProvider: CoroutineDispatchers,
     private val giphyApi: GiphyApi
 ) : CardsListInput {
 
@@ -20,7 +21,7 @@ class CardsListGateway(
 
     override suspend fun requestTopCards(offset: Int): List<Card> {
         try {
-            val data = uiScope.async(Dispatchers.IO) {
+            val data = uiScope.async(coroutineContextProvider.io) {
                 giphyApi.getTopCardList(offset)
             }
             return data.await()

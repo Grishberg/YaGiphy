@@ -1,6 +1,5 @@
 package com.github.grishberg.contentdetailspresentation
 
-import android.graphics.Bitmap
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +14,7 @@ import com.github.grishberg.contentderailspresentation.R
 import com.github.grishberg.contentdetails.ContentDetails
 import com.github.grishberg.contentdetails.TwitterHashTag
 import com.github.grishberg.core.Card
+import com.github.grishberg.core.ImageHolder
 import com.google.android.material.snackbar.Snackbar
 
 /**
@@ -42,7 +42,6 @@ class ContentDetailsFacade(
         })
 
         viewModel.content.observe(activity, Observer<Card> { card ->
-            card.render(renderer)
             renderer.hideTwitterHashTag()
         })
 
@@ -50,8 +49,14 @@ class ContentDetailsFacade(
             renderer.showTwitterHashTitle(twitterHashTag.name)
         })
 
-        viewModel.needInvalidateImage.observe(activity, Observer<Bitmap> { image ->
+        viewModel.needInvalidateImage.observe(activity, Observer<ImageHolder> { image ->
             renderer.showTargetBitmap(image)
+        })
+
+        viewModel.showStub.observe(activity, Observer<Boolean> { shouldShowStub ->
+            if (shouldShowStub) {
+                renderer.showDefaultBackground()
+            }
         })
 
         twitterHashTagView.setOnClickListener {
