@@ -14,7 +14,9 @@ class ContentDetailsUseCase(
     private val input: ContentDetailsInput
 ) : ContentDetails, CardImageGateway.ImageReadyAction {
     private var currentCard: Card? = null
+    private var currentCardTwitterHashTag: TwitterHashTag = TwitterHashTag.EMPTY_HASHTAG
     private val outputs = mutableListOf<ContentDetailsOutput>()
+    private val twitterOutputs = mutableListOf<TwitterOutputBounds>()
     private val errorHandler = CoroutineExceptionHandler { _, exception ->
         uiScope.launch(Dispatchers.Main) {
             outputs.forEach { it.showError(exception.message.orEmpty()) }
@@ -27,10 +29,11 @@ class ContentDetailsUseCase(
 
     override fun onCardSelected(card: Card) {
         currentCard = card
+        currentCardTwitterHashTag = TwitterHashTag.EMPTY_HASHTAG
         notifyCardSelected(card)
         uiScope.launch {
-            val twitterHashTag = input.requestTwitterUserName(card)
-            outputs.forEach { it.showTwitterHashTag(twitterHashTag) }
+            currentCardTwitterHashTag = input.requestTwitterUserName(card)
+            outputs.forEach { it.showTwitterHashTag(currentCardTwitterHashTag) }
         }
     }
 
@@ -45,7 +48,12 @@ class ContentDetailsUseCase(
         if (targetCard != currentCard) {
             return
         }
-        outputs.forEach { it.updateCardImage() }
+        val image = imageInput.requestImageForCard(targetCard)
+        image?.let { bitmap -> outputs.forEach { it.updateCardImage(bitmap) } }
+    }
+
+    override fun onError(message: String) {
+        outputs.forEach { it.showError(message) }
     }
 
     override fun requestCardById(cardId: String) {
@@ -56,16 +64,7 @@ class ContentDetailsUseCase(
     }
 
     override fun onTwitterHashTagClicked() {
-        //TODO: open twitter account
-    }
-
-    /**
-     * TODO: handle errors.
-     */
-    private fun onContentReceiveError(message: String) {
-        for(output in outputs) {
-            output.showError(message)
-        }
+        twitterOutputs.forEach { it.showTwitterScreen(currentCardTwitterHashTag) }
     }
 
     override fun registerOutput(output: ContentDetailsOutput) {
@@ -74,5 +73,9 @@ class ContentDetailsUseCase(
 
     override fun unregisterOutput(output: ContentDetailsOutput) {
         outputs.remove(output)
+    }
+
+    override fun registerTwitterOutput(output: TwitterOutputBounds) {
+        twitterOutputs.add(output)
     }
 }

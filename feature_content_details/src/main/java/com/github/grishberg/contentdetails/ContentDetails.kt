@@ -5,8 +5,6 @@ import com.github.grishberg.core.Card
 
 interface ContentDetails {
     fun onCardSelected(card: Card)
-    fun registerOutput(output: ContentDetailsOutput)
-    fun unregisterOutput(output: ContentDetailsOutput)
     fun getImageForUrl(selectedCard: Card): Bitmap?
     /**
      * Is called when user clicked by twitter account button
@@ -14,4 +12,10 @@ interface ContentDetails {
     fun onTwitterHashTagClicked()
 
     fun requestCardById(cardId: String)
+
+
+    fun registerOutput(output: ContentDetailsOutput)
+    fun unregisterOutput(output: ContentDetailsOutput)
+
+    fun registerTwitterOutput(output: TwitterOutputBounds)
 }

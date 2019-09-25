@@ -8,6 +8,7 @@ interface CardImageGateway {
          * Is called when image for {@param targetCard} is ready.
          */
         fun onImageReadyForCard(targetCard: Card)
+        fun onError(message: String)
     }
 
     fun requestImageForCard(card: Card): Bitmap?

@@ -2,6 +2,9 @@ package com.github.grishberg.giphygateway
 
 import com.google.gson.annotations.SerializedName
 
+/**
+ * Giphy json POJOs
+ */
 data class CardListData(
     val data: List<CardData>,
     val pagination: Pagination

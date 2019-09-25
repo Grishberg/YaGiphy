@@ -2,14 +2,12 @@ package com.github.grishberg.giphygateway
 
 import com.github.grishberg.core.Card
 import com.github.grishberg.giphygateway.api.GiphyApi
-import com.github.grishberg.giphygateway.api.ResponseNotSuccessException
 import com.github.grishberg.imageslist.CardFactory
 import com.github.grishberg.imageslist.CardsListInput
 import com.github.grishberg.imageslist.exceptions.CardListInputException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
-import okhttp3.OkHttpClient
 
 class CardsListGateway(
     private val uiScope: CoroutineScope,
@@ -27,6 +25,7 @@ class CardsListGateway(
             }
             return data.await()
         } catch (e: Exception) {
+            // convert giphy layer-specific errors to use-case specific.
             throw CardListInputException(e.message.orEmpty())
         }
     }

@@ -15,13 +15,18 @@ class ImageDownloader(
     /**
      * gets image from network.
      */
+    @Throws(GiphyImageReceiveException::class)
     fun downloadImage(url: String): Bitmap? {
         val request = Request.Builder()
             .url(url)
             .build()
 
         val response = client.newCall(request).execute()
-        val body = response.body ?: return null
+        if (!response.isSuccessful) {
+            throw GiphyImageReceiveException("Response code is ${response.code}")
+        }
+        val body =
+            response.body ?: throw GiphyImageReceiveException("Response body is empty")
         val bufferedInputStream = BufferedInputStream(body.byteStream())
         return BitmapFactory.decodeStream(bufferedInputStream)
     }

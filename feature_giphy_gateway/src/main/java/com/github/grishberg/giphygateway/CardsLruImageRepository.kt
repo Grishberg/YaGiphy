@@ -6,10 +6,7 @@ import androidx.annotation.MainThread
 import com.github.grishberg.core.Card
 import com.github.grishberg.core.CardImageGateway
 import com.github.grishberg.giphygateway.api.ImageDownloader
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import okhttp3.OkHttpClient
 
 /**
@@ -21,23 +18,24 @@ class CardsLruImageRepository(
     private val lruCache: LruCache<String, Bitmap>
 ) : CardImageGateway {
     private val actions = mutableListOf<CardImageGateway.ImageReadyAction>()
+    private val errorHandler = CoroutineExceptionHandler { _, exception ->
+        uiScope.launch(Dispatchers.Main) {
+            actions.forEach { it.onError(exception.message.orEmpty()) }
+        }
+    }
 
     override fun requestImageForCard(card: Card): Bitmap? {
-
-        // 1) check from cache
         val bitmapFromCache = lruCache.get(card.imageUrl)
         if (bitmapFromCache != null) {
             return bitmapFromCache
         }
-
         downloadImageFromNetwork(card, card.imageUrl)
         return null
     }
 
     private fun downloadImageFromNetwork(card: Card, url: String) =
-        uiScope.launch {
+        uiScope.launch(errorHandler) {
             val task = async(Dispatchers.IO) {
-                // background thread
                 imageDownloader.downloadImage(url)
             }
             val bitmap = task.await()
@@ -57,17 +55,10 @@ class CardsLruImageRepository(
 
     @MainThread
     private fun notifyCardImageReceived(card: Card) {
-        for (action in actions) {
-            action.onImageReadyForCard(card)
-        }
+        actions.forEach { it.onImageReadyForCard(card) }
     }
 
     companion object {
-        /**
-         * @param uiScope CoroutineScope for controlling coroutines.
-         * @param memClass = view.getMemoryClassFromActivity()
-         * @param okHttpClient OkHttpClient instance
-         */
         fun create(
             uiScope: CoroutineScope,
             memClass: Int
