@@ -1,10 +1,10 @@
-package com.github.grishberg.main.presentation
+package com.github.grishberg.yagiphy.presentation
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.github.grishberg.main.domain.ApplicationUseCase
-import com.github.grishberg.main.domain.OutputBounds
+import com.github.grishberg.yagiphy.domain.ApplicationUseCase
+import com.github.grishberg.yagiphy.domain.OutputBounds
 
 /**
  * Sends messages from {@link ApplicationUseCase} to router.

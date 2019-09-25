@@ -17,8 +17,8 @@ import com.github.grishberg.imagelist.CardListUseCase
 import com.github.grishberg.imageslist.CardsList
 import com.github.grishberg.imageslistpresentation.ImagesListFacade
 import com.github.grishberg.imageslistpresentation.VerticalCardFactory
-import com.github.grishberg.main.domain.ApplicationUseCase
-import com.github.grishberg.main.presentation.Router
+import com.github.grishberg.yagiphy.domain.ApplicationUseCase
+import com.github.grishberg.yagiphy.presentation.Router
 import com.github.grishberg.yagiphy.BuildConfig.API_KEY
 
 
@@ -35,7 +35,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        lifecycle.addObserver(uiScope)
 
         if (savedInstanceState == null) {
             create()
@@ -53,12 +52,6 @@ class MainActivity : AppCompatActivity() {
         return UseCaseStorage(cardList, contentDetails, appUseCase)
     }
 
-    override fun onBackPressed() {
-        if (!appUseCase.onBackPressed()) {
-            super.onBackPressed()
-        }
-    }
-
     private fun create() {
         val giphyApi = GiphyApi(API_KEY)
 
@@ -74,7 +67,8 @@ class MainActivity : AppCompatActivity() {
         val contentDetailsInput = ContentRepository.create(uiScope, giphyApi)
         contentDetails = ContentDetailsUseCase(uiScope, imagesGateway, contentDetailsInput)
 
-        appUseCase = ApplicationUseCase(cardList, contentDetails)
+        appUseCase =
+            ApplicationUseCase(cardList, contentDetails)
 
         createViews(cardList, contentDetails, appUseCase)
         checkDeepLink(appUseCase, intent)
@@ -90,7 +84,7 @@ class MainActivity : AppCompatActivity() {
         val action = intent.action
         val data = intent.dataString
 
-        if (Intent.ACTION_VIEW.equals(action) && data != null) {
+        if (Intent.ACTION_VIEW == action && data != null) {
             val cardId = data.substring(data.lastIndexOf("/") + 1)
             appUseCase.onRequestedByDeepLink(cardId)
         }
@@ -106,7 +100,6 @@ class MainActivity : AppCompatActivity() {
             contentDetails = configuration.contentDetails
             cardList = configuration.cardList
             appUseCase = configuration.appUseCase
-
             createViews(cardList, contentDetails, appUseCase)
         }
     }
@@ -125,7 +118,25 @@ class MainActivity : AppCompatActivity() {
         val contentDetailsFacade = ContentDetailsFacade(contentDetails)
         contentDetailsFacade.attachToParent(this, content)
 
-        Router(this, appUseCase, imagesListFacade, contentDetailsFacade)
+        Router(
+            this,
+            appUseCase,
+            imagesListFacade,
+            contentDetailsFacade
+        )
+    }
+
+    override fun onBackPressed() {
+        if (!appUseCase.onBackPressed()) {
+            super.onBackPressed()
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (isFinishing) {
+            uiScope.destroy()
+        }
     }
 
     private data class UseCaseStorage(

@@ -12,17 +12,16 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import com.github.grishberg.contentderailspresentation.R
 import com.github.grishberg.contentdetails.ContentDetails
-import com.github.grishberg.contentdetails.ContentDetailsPresentationFacade
 import com.github.grishberg.contentdetails.TwitterHashTag
 import com.github.grishberg.core.Card
 import com.google.android.material.snackbar.Snackbar
 
 class ContentDetailsFacade(
     private val contentDetails: ContentDetails
-) : ContentDetailsPresentationFacade {
+) {
     private var view: View? = null
 
-    override fun attachToParent(activity: FragmentActivity, parent: ViewGroup) {
+    fun attachToParent(activity: FragmentActivity, parent: ViewGroup) {
         val viewModel = ViewModelProviders
             .of(activity, ViewModelFactory(contentDetails))
             .get(ContentDetailsViewModel::class.java)
@@ -55,13 +54,13 @@ class ContentDetailsFacade(
         parent.addView(rootView)
     }
 
-    override fun show() {
+    fun show() {
         view?.let { v ->
             v.visibility = View.VISIBLE
         }
     }
 
-    override fun hide() {
+    fun hide() {
         view?.let { v ->
             v.visibility = View.GONE
         }

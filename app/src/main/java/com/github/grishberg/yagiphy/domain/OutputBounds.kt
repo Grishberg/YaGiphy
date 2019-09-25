@@ -1,4 +1,4 @@
-package com.github.grishberg.main.domain
+package com.github.grishberg.yagiphy.domain
 
 interface OutputBounds {
     fun showDetailedInformation()

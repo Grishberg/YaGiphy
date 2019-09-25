@@ -1,10 +1,10 @@
-package com.github.grishberg.main.presentation
+package com.github.grishberg.yagiphy.presentation
 
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.*
-import com.github.grishberg.contentdetails.ContentDetailsPresentationFacade
-import com.github.grishberg.imageslist.CardListPresentationFacade
-import com.github.grishberg.main.domain.ApplicationUseCase
+import com.github.grishberg.contentdetailspresentation.ContentDetailsFacade
+import com.github.grishberg.imageslistpresentation.ImagesListFacade
+import com.github.grishberg.yagiphy.domain.ApplicationUseCase
 
 /**
  * Switches cards list or content visibility.
@@ -12,13 +12,15 @@ import com.github.grishberg.main.domain.ApplicationUseCase
 class Router(
     activity: FragmentActivity,
     appUseCase: ApplicationUseCase,
-    private val cardsListFacade: CardListPresentationFacade,
-    private val contentDetailsFacade: ContentDetailsPresentationFacade
+    private val cardsListFacade: ImagesListFacade,
+    private val contentDetailsFacade: ContentDetailsFacade
 ) : LifecycleObserver {
 
     init {
         val viewModel = ViewModelProviders
-            .of(activity, ViewModelFactory(appUseCase))
+            .of(activity,
+                ViewModelFactory(appUseCase)
+            )
             .get(RouterViewModel::class.java)
 
         viewModel.showCardContentScreen.observe(activity, Observer<Boolean> { shouldShow ->

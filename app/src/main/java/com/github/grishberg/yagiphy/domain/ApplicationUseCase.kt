@@ -1,4 +1,4 @@
-package com.github.grishberg.main.domain
+package com.github.grishberg.yagiphy.domain
 
 import com.github.grishberg.contentdetails.ContentDetails
 import com.github.grishberg.core.Card
@@ -36,7 +36,8 @@ class ApplicationUseCase(
         state.onRequestedByDeepLink(id)
     }
 
-    private inner class DetailedState : State {
+    private inner class DetailedState :
+        State {
         override fun onBackPressed(): Boolean {
             state = cardListState
             notifyShowCardList()

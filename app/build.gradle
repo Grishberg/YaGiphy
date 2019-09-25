@@ -33,6 +33,7 @@ def getApiKey() {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "android.arch.lifecycle:extensions:1.1.1"
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.core:core-ktx:1.1.0'
     testImplementation 'junit:junit:4.12'
@@ -47,6 +48,5 @@ dependencies {
     implementation project(path: ':feature_images_list')
     implementation project(path: ':feature_images_list_domain')
     implementation project(path: ':feature_images_list_presentation')
-    implementation project(path: ':main_module')
     implementation project(path: ':feature_content_details_presentation')
 }

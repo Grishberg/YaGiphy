@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.github.grishberg.core.Card
-import com.github.grishberg.imageslist.CardListPresentationFacade
 import com.github.grishberg.imageslist.CardsList
 import com.github.grishberg.imageslistpresentation.rv.CardItemDecoration
 import com.github.grishberg.imageslistpresentation.rv.CardsAdapter
@@ -23,7 +22,7 @@ private const val COLUMNS_COUNT = 2
  */
 class ImagesListFacade(
     private val cardsList: CardsList
-) : CardListPresentationFacade, LifecycleObserver {
+) : LifecycleObserver {
     private var rootView: View? = null
     private var layoutManager: LinearLayoutManager? = null
     private var vm: ImagesListViewModel? = null
@@ -31,7 +30,7 @@ class ImagesListFacade(
     /**
      * Creates vertical list view and attaches to {@param parent}
      */
-    override fun attachToParent(activity: FragmentActivity, parent: ViewGroup) {
+    fun attachToParent(activity: FragmentActivity, parent: ViewGroup) {
         val viewModel = ViewModelProviders
             .of(activity, ViewModelFactory(cardsList))
             .get(ImagesListViewModel::class.java)
@@ -81,11 +80,11 @@ class ImagesListFacade(
         }
     }
 
-    override fun hide() {
+    fun hide() {
         rootView?.let { it.visibility = View.GONE }
     }
 
-    override fun show() {
+    fun show() {
         rootView?.let { it.visibility = View.VISIBLE }
     }
 
