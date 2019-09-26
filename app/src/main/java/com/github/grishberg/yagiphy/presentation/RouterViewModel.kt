@@ -4,19 +4,19 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.github.grishberg.yagiphy.domain.ApplicationUseCase
-import com.github.grishberg.yagiphy.domain.OutputBounds
+import com.github.grishberg.yagiphy.domain.AppUseCaseOutput
 
 /**
  * Sends messages from {@link ApplicationUseCase} to router.
  */
 class RouterViewModel(
     applicationLogic: ApplicationUseCase
-) : ViewModel(), OutputBounds {
+) : ViewModel(), AppUseCaseOutput {
     private val _showCardContentScreen = MutableLiveData<Boolean>()
     val showCardContentScreen: LiveData<Boolean> = _showCardContentScreen
 
     init {
-        applicationLogic.registerOutputBounds(this)
+        applicationLogic.registerOutput(this)
     }
 
     override fun showDetailedInformation() {

@@ -1,6 +1,6 @@
 package com.github.grishberg.yagiphy.domain
 
-interface OutputBounds {
+interface AppUseCaseOutput {
     fun showDetailedInformation()
     fun showCardsList()
 }

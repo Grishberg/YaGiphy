@@ -49,7 +49,9 @@ class MainActivity : AppCompatActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        checkDeepLink(appUseCase, intent)
+        val intentData = extractIntentDataOrNull(intent)
+
+        appUseCase.handleNewIntent(intentData)
     }
 
     override fun onRetainCustomNonConfigurationInstance(): Any {
@@ -86,23 +88,21 @@ class MainActivity : AppCompatActivity() {
             ApplicationUseCase(cardList, contentDetails)
 
         createViews(cardList, contentDetails, appUseCase)
-        checkDeepLink(appUseCase, intent)
+
+        appUseCase.start(extractIntentDataOrNull(intent))
     }
 
-    private fun checkDeepLink(
-        appUseCase: ApplicationUseCase,
-        intent: Intent?
-    ) {
+    private fun extractIntentDataOrNull(intent: Intent?): String? {
         if (intent == null) {
-            return
+            return null
         }
         val action = intent.action
         val data = intent.dataString
 
         if (Intent.ACTION_VIEW == action && data != null) {
-            val cardId = data.substring(data.lastIndexOf("/") + 1)
-            appUseCase.onRequestedByDeepLink(cardId)
+            return data
         }
+        return null
     }
 
     private fun getMemoryClassFromActivity(): Int {

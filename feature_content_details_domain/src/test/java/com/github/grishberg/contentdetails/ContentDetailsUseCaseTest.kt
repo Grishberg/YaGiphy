@@ -8,7 +8,7 @@ import org.junit.Test
 class ContentDetailsUseCaseTest {
     private val scope = CoroutineTestScope()
 
-    private val coroutineContextProvider = TestContextProvider()
+    private val testDispatchers = TestDispatchers()
     private val twitterTag = ValidTwitterHashTag()
     private val downloadedImage = mock<ImageHolder>()
     private val cardInfo = mock<CardInfo>()
@@ -62,6 +62,16 @@ class ContentDetailsUseCaseTest {
     }
 
     @Test
+    fun `notify image loaded after receiving card by id`() {
+        underTest.onCardSelected(mock())
+        whenReceivedCardWithoutImage()
+
+        whenReceivedImageForCard()
+
+        verify(contentDetailsOutput).updateCardImage(downloadedImage)
+    }
+
+    @Test
     fun `notify error when twitter hashTag request failed`() {
         val contentDetailsInputWithError = mock<ContentDetailsInput> {
             onBlocking { requestCardById(any()) } doThrow ContentDetailsInputException("fail")
@@ -84,7 +94,7 @@ class ContentDetailsUseCaseTest {
     }
 
     private fun createContentDetails(contentDetails: ContentDetailsInput = contentDetailsInput) =
-        ContentDetailsUseCase(scope, coroutineContextProvider, imageInput, contentDetails).apply {
+        ContentDetailsUseCase(scope, testDispatchers, imageInput, contentDetails).apply {
             registerOutput(contentDetailsOutput)
             registerUserProfileOutput(twitterOutput)
         }
@@ -95,7 +105,7 @@ class ContentDetailsUseCaseTest {
         override val accountUrl = "http://twitter.com"
     }
 
-    class TestContextProvider : CoroutineDispatchers {
+    class TestDispatchers : CoroutineDispatchers {
         override val main = ImmediatelyCoroutineDispatcher()
         override val io = ImmediatelyCoroutineDispatcher()
     }

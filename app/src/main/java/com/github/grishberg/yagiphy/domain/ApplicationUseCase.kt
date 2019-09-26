@@ -8,19 +8,44 @@ import com.github.grishberg.imageslist.CardsList
  * Application use case, contains main logic for switching between screens.
  */
 class ApplicationUseCase(
-    cardsList: CardsList,
+    private val cardsList: CardsList,
     private val contentDetails: ContentDetails
 ) {
+    private val idle = Idle()
+    private val startedShowingDeepLink = StartedShowingDeepLink()
     private val cardListState = ListState()
     private val detailedState = DetailedState()
-    private var state: State = cardListState
-    private val outputBounds = mutableListOf<OutputBounds>()
+    private var state: State = idle
+    private val outputBounds = mutableListOf<AppUseCaseOutput>()
 
     init {
         cardsList.registerCardSelectedAction {
             state.onCardSelected(it)
         }
-        cardsList.requestCardsFirstPage()
+    }
+
+    /**
+     * Entry point.
+     * @param intentData has intent data as string.
+     */
+    fun start(intentData: String?) {
+        if (intentData == null) {
+            state.startWithoutDeepLink()
+        } else {
+            onRequestedByDeepLink(intentData)
+        }
+    }
+
+    /**
+     * Is called when received new intent with action VIEW.
+     */
+    fun handleNewIntent(intentData: String?) {
+        intentData?.let { onRequestedByDeepLink(intentData) }
+    }
+
+    private fun onRequestedByDeepLink(intentData: String) {
+        val cardId = intentData.substring(intentData.lastIndexOf("/") + 1)
+        state.onRequestedByDeepLink(cardId)
     }
 
     /**
@@ -28,24 +53,24 @@ class ApplicationUseCase(
      */
     fun onBackPressed(): Boolean = state.onBackPressed()
 
-    fun registerOutputBounds(output: OutputBounds) {
+    fun registerOutput(output: AppUseCaseOutput) {
         outputBounds.add(output)
     }
 
-    fun onRequestedByDeepLink(id: String) {
-        state.onRequestedByDeepLink(id)
+    private fun showDetailedInformation() {
+        outputBounds.forEach { it.showDetailedInformation() }
+    }
+
+    private fun showCardList() {
+        outputBounds.forEach { it.showCardsList() }
     }
 
     private inner class DetailedState :
         State {
         override fun onBackPressed(): Boolean {
             state = cardListState
-            notifyShowCardList()
+            showCardList()
             return true
-        }
-
-        private fun notifyShowCardList() {
-            outputBounds.forEach { it.showCardsList() }
         }
 
         override fun onRequestedByDeepLink(cardId: String) {
@@ -57,24 +82,43 @@ class ApplicationUseCase(
         override fun onCardSelected(selectedCard: Card) {
             state = detailedState
             contentDetails.onCardSelected(selectedCard)
-            notifyShowDetailedInformation()
+            showDetailedInformation()
         }
 
         override fun onRequestedByDeepLink(cardId: String) {
             state = detailedState
             contentDetails.requestCardById(cardId)
-            notifyShowDetailedInformation()
+            showDetailedInformation()
+        }
+    }
+
+    private inner class StartedShowingDeepLink : State {
+        override fun onBackPressed(): Boolean {
+            state = cardListState
+            cardsList.requestCardsFirstPage()
+            showCardList()
+            return true
+        }
+    }
+
+    private inner class Idle : State {
+        override fun onRequestedByDeepLink(cardId: String) {
+            state = startedShowingDeepLink
+            contentDetails.requestCardById(cardId)
+            showDetailedInformation()
         }
 
-        private fun notifyShowDetailedInformation() {
-            outputBounds.forEach { it.showDetailedInformation() }
+        override fun startWithoutDeepLink() {
+            state = cardListState
+            showCardList()
+            cardsList.requestCardsFirstPage()
         }
-
     }
 
     private interface State {
         fun onBackPressed() = false
         fun onCardSelected(selectedCard: Card) = Unit
-        fun onRequestedByDeepLink(cardId: String)
+        fun onRequestedByDeepLink(cardId: String) = Unit
+        fun startWithoutDeepLink() = Unit
     }
 }
