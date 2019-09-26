@@ -36,12 +36,12 @@ class TwitterApi(
             .build()
 
         val response = client.newCall(request).execute()
-        val body = response.body ?: return TwitterHashTag.EMPTY_HASHTAG
+        val body = response.body ?: return TwitterHashTag.EMPTY
         val stream = body.charStream()
         val cardDataType = object : TypeToken<TwitterValidationData>() {}.type
         val validationData = gson.fromJson<TwitterValidationData>(stream, cardDataType)
         if (validationData.valid || validationData.reason != TAKEN) {
-            return TwitterHashTag.EMPTY_HASHTAG
+            return TwitterHashTag.EMPTY
         }
         return TwitterHashTagImpl(true, "@$userName", "https://twitter.com/$userName")
     }

@@ -1,7 +1,7 @@
 package com.github.grishberg.contentdetailspresentation
 
-import com.github.grishberg.core.CardInfo
-import com.github.grishberg.core.CardInfoRenderer
+import com.github.grishberg.imageslist.CardInfo
+import com.github.grishberg.imageslist.CardInfoRenderer
 
 internal class CardInfoImpl(
     private val userName: String,

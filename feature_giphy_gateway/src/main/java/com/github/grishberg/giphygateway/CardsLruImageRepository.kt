@@ -5,6 +5,9 @@ import android.util.LruCache
 import androidx.annotation.MainThread
 import com.github.grishberg.core.*
 import com.github.grishberg.giphygateway.api.ImageDownloader
+import com.github.grishberg.imageslist.Card
+import com.github.grishberg.imageslist.CardImageGateway
+import com.github.grishberg.imageslist.ImageHolder
 import kotlinx.coroutines.*
 import okhttp3.OkHttpClient
 

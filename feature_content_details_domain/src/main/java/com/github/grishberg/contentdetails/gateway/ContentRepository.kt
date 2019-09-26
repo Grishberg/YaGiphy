@@ -3,9 +3,9 @@ package com.github.grishberg.contentdetails.gateway
 import com.github.grishberg.contentdetails.ContentDetailsInput
 import com.github.grishberg.contentdetails.TwitterHashTag
 import com.github.grishberg.contentdetails.exceptions.ContentDetailsInputException
-import com.github.grishberg.core.Card
 import com.github.grishberg.core.CoroutineDispatchers
 import com.github.grishberg.giphygateway.api.GiphyApi
+import com.github.grishberg.imageslist.Card
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import okhttp3.OkHttpClient

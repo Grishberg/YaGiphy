@@ -6,9 +6,9 @@ import androidx.lifecycle.ViewModel
 import com.github.grishberg.contentdetails.ContentDetails
 import com.github.grishberg.contentdetails.ContentDetailsOutput
 import com.github.grishberg.contentdetails.TwitterHashTag
-import com.github.grishberg.core.CardInfo
-import com.github.grishberg.core.ImageHolder
 import com.github.grishberg.core.SingleLiveEvent
+import com.github.grishberg.imageslist.CardInfo
+import com.github.grishberg.imageslist.ImageHolder
 
 class ContentDetailsViewModel(
     contentDetails: ContentDetails

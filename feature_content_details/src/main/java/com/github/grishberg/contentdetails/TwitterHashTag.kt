@@ -5,7 +5,7 @@ interface TwitterHashTag {
     val name: String
     val accountUrl: String
 
-    object EMPTY_HASHTAG : TwitterHashTag {
+    object EMPTY : TwitterHashTag {
         override val isValid = false
         override val name = ""
         override val accountUrl = ""

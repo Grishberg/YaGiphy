@@ -1,4 +1,4 @@
-package com.github.grishberg.core
+package com.github.grishberg.imageslist
 
 interface CardImageGateway: ImagesProvider {
     interface ImageReadyAction {

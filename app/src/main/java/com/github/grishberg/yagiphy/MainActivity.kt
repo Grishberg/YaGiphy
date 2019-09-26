@@ -59,19 +59,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun create() {
+        val memClass = getMemoryClassFromActivity()
         val coroutineContextProvider = CoroutineDispatchersImpl()
+        val imagesGateway = CardsLruImageRepository.create(uiScope, coroutineContextProvider, memClass)
 
-        val giphyApi = GiphyApi(API_KEY)
-
+        val cardFactory = VerticalCardFactory(imagesGateway, CardInfoFactoryImpl())
+        val giphyApi = GiphyApi(API_KEY, cardFactory)
         val cardListInput = CardsListGateway(uiScope, coroutineContextProvider, giphyApi)
 
-        val memClass = getMemoryClassFromActivity()
-        val imagesGateway =
-            CardsLruImageRepository.create(uiScope, coroutineContextProvider, memClass)
         cardList = CardListUseCase(uiScope, cardListInput, imagesGateway)
-
-        val cardFactory = VerticalCardFactory(imagesGateway, cardList, CardInfoFactoryImpl())
-        cardListInput.setCardFactory(cardFactory)
 
         val contentDetailsInput =
             ContentRepository.create(uiScope, coroutineContextProvider, giphyApi)

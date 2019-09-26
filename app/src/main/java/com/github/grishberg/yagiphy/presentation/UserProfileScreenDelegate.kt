@@ -5,7 +5,7 @@ import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.net.Uri
 import com.github.grishberg.contentdetails.UserProfileOutput
-import com.github.grishberg.core.Card
+import com.github.grishberg.imageslist.Card
 
 /**
  * Opens user profile screen

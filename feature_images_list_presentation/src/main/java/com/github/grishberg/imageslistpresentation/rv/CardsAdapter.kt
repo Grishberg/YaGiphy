@@ -4,12 +4,14 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.github.grishberg.core.Card
+import com.github.grishberg.imageslist.Card
+import com.github.grishberg.imageslist.CardsList
 import com.github.grishberg.imageslistpresentation.R
 import com.github.grishberg.imageslistpresentation.VerticalListCard
 
 internal class CardsAdapter(
-    private val inflater: LayoutInflater
+    private val inflater: LayoutInflater,
+    private val cardsList: CardsList
 ) : RecyclerView.Adapter<CardViewHolder>() {
     private val items = mutableListOf<Card>()
 
@@ -26,7 +28,7 @@ internal class CardsAdapter(
         view.setOnClickListener {
             val pos = vh.adapterPosition
             if (pos != RecyclerView.NO_POSITION) {
-                (items[pos] as VerticalListCard).handleClick()
+                cardsList.onCardSelected(pos)
             }
         }
         return vh

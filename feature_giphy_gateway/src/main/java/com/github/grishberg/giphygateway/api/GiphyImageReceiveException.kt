@@ -1,3 +1,3 @@
 package com.github.grishberg.giphygateway.api
 
-class GiphyImageReceiveException(msg: String) : Exception(msg)
+internal class GiphyImageReceiveException(msg: String) : Exception(msg)

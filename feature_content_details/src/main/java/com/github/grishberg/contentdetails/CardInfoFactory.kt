@@ -1,6 +1,6 @@
 package com.github.grishberg.contentdetails
 
-import com.github.grishberg.core.CardInfo
+import com.github.grishberg.imageslist.CardInfo
 
 interface CardInfoFactory {
     fun create(

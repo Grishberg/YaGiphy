@@ -1,7 +1,7 @@
 package com.github.grishberg.contentdetails
 
 import com.github.grishberg.contentdetails.exceptions.ContentDetailsInputException
-import com.github.grishberg.core.Card
+import com.github.grishberg.imageslist.Card
 
 interface ContentDetailsInput {
     suspend fun requestTwitterUserName(selectedCard: Card): TwitterHashTag

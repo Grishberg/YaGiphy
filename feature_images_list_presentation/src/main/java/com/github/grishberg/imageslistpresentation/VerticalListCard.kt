@@ -1,8 +1,8 @@
 package com.github.grishberg.imageslistpresentation
 
+import com.github.grishberg.imageslist.CardInfo
 import com.github.grishberg.contentdetails.CardInfoFactory
-import com.github.grishberg.core.*
-import com.github.grishberg.imageslist.CardsList
+import com.github.grishberg.imageslist.*
 
 /**
  * Abstraction of list item (not DTO).
@@ -15,7 +15,6 @@ internal class VerticalListCard(
     private val displayName: String?,
     private val profileUrl: String?,
     private val imagesProvider: ImagesProvider,
-    private val cardsList: CardsList,
     private val cardInfoFactory: CardInfoFactory
 ) : Card {
     private var hasImage = false
@@ -37,10 +36,6 @@ internal class VerticalListCard(
         if (shouldAnimate) {
             renderer.animate()
         }
-    }
-
-    override fun handleClick() {
-        cardsList.onCardSelected(this)
     }
 
     override fun provideCardInfo(): CardInfo {

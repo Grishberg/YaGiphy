@@ -1,6 +1,10 @@
 package com.github.grishberg.contentdetails
 
-import com.github.grishberg.core.*
+import com.github.grishberg.core.CoroutineDispatchers
+import com.github.grishberg.imageslist.Card
+import com.github.grishberg.imageslist.CardImageGateway
+import com.github.grishberg.imageslist.CardInfo
+import com.github.grishberg.imageslist.ImageHolder
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -12,7 +16,7 @@ class ContentDetailsUseCase(
     private val input: ContentDetailsInput
 ) : ContentDetails, CardImageGateway.ImageReadyAction {
     private var currentCard: Card? = null
-    private var currentCardTwitterHashTag: TwitterHashTag = TwitterHashTag.EMPTY_HASHTAG
+    private var currentCardTwitterHashTag: TwitterHashTag = TwitterHashTag.EMPTY
     private val outputs = mutableListOf<ContentDetailsOutput>()
     private val userProfileOutputs = mutableListOf<UserProfileOutput>()
     private val errorHandler = CoroutineExceptionHandler { _, exception ->
@@ -27,7 +31,7 @@ class ContentDetailsUseCase(
 
     override fun onCardSelected(card: Card) {
         currentCard = card
-        currentCardTwitterHashTag = TwitterHashTag.EMPTY_HASHTAG
+        currentCardTwitterHashTag = TwitterHashTag.EMPTY
         showStub()
         showCardDetails(card.provideCardInfo())
         requestImageForCard(card)
@@ -37,7 +41,7 @@ class ContentDetailsUseCase(
     private fun requestTwitterHashTag(card: Card) {
         uiScope.launch(errorHandler) {
             currentCardTwitterHashTag = input.requestTwitterUserName(card)
-            if (currentCardTwitterHashTag != TwitterHashTag.EMPTY_HASHTAG) {
+            if (currentCardTwitterHashTag != TwitterHashTag.EMPTY) {
                 showTwitterHasTag()
             }
         }
@@ -94,10 +98,6 @@ class ContentDetailsUseCase(
 
     override fun registerOutput(output: ContentDetailsOutput) {
         outputs.add(output)
-    }
-
-    override fun unregisterOutput(output: ContentDetailsOutput) {
-        outputs.remove(output)
     }
 
     override fun registerUserProfileOutput(output: UserProfileOutput) {

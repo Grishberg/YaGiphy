@@ -5,16 +5,16 @@ import com.google.gson.annotations.SerializedName
 /**
  * Giphy json POJOs
  */
-data class CardListData(
+internal data class CardListData(
     val data: List<CardData>,
     val pagination: Pagination
 )
 
-data class SingleCardData(
+internal data class SingleCardData(
     val data: CardData
 )
 
-data class CardData(
+internal data class CardData(
     val type: String,
     val id: String,
     val url: String,
@@ -24,7 +24,7 @@ data class CardData(
     val images: Images
 )
 
-data class User(
+internal data class User(
     val username: String,
     @SerializedName("display_name")
     val displayName: String,
@@ -32,18 +32,18 @@ data class User(
     val profileUrl: String
 )
 
-data class Images(
+internal data class Images(
     @SerializedName("480w_still")
     val previewImage: PreviewImage
 )
 
-data class PreviewImage(
+internal data class PreviewImage(
     val url: String,
     val width: Int,
     val height: Int
 )
 
-data class Pagination(
+internal data class Pagination(
     @SerializedName("total_count")
     val totalCount: Int,
     val count: Int,

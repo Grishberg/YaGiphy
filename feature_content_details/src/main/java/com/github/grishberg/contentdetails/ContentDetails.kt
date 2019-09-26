@@ -1,6 +1,6 @@
 package com.github.grishberg.contentdetails
 
-import com.github.grishberg.core.Card
+import com.github.grishberg.imageslist.Card
 
 interface ContentDetails {
     fun onCardSelected(card: Card)
@@ -13,7 +13,6 @@ interface ContentDetails {
     fun requestCardById(cardId: String)
 
     fun registerOutput(output: ContentDetailsOutput)
-    fun unregisterOutput(output: ContentDetailsOutput)
 
     fun registerUserProfileOutput(output: UserProfileOutput)
 

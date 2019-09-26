@@ -1,16 +1,12 @@
 package com.github.grishberg.imagelist
 
-import com.github.grishberg.core.Card
-import com.github.grishberg.core.CardImageGateway
-import com.github.grishberg.core.ImageHolder
-import com.github.grishberg.imageslist.CardSelectedAction
-import com.github.grishberg.imageslist.CardsList
-import com.github.grishberg.imageslist.CardsListInput
-import com.github.grishberg.imageslist.CardsListOutput
+import com.github.grishberg.imageslist.*
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+
+private const val START_DOWNLOAD_OFFSET = 20
 
 class CardListUseCase(
     private val uiScope: CoroutineScope,
@@ -32,12 +28,10 @@ class CardListUseCase(
         imagesInput.registerImageReadyAction(this)
     }
 
-    override fun onCardSelected(selectedCard: Card) {
+    override fun onCardSelected(selectedPosition: Int) {
+        val selectedCard = cardsList[selectedPosition]
         cardSelectedActions.forEach { it.invoke(selectedCard) }
     }
-
-    override fun requestImageByCard(shownCard: Card): ImageHolder =
-        imagesInput.requestImageForCard(shownCard)
 
     override fun requestCardsFirstPage() {
         uiScope.launch(errorHandler) {
@@ -48,7 +42,7 @@ class CardListUseCase(
     }
 
     override fun onScrollStateChanged(lastVisibleItemPosition: Int) {
-        if (isLoading || lastVisibleItemPosition < cardsList.size - 1) {
+        if (isLoading || lastVisibleItemPosition < cardsList.size - START_DOWNLOAD_OFFSET - 1) {
             return
         }
 
@@ -75,7 +69,7 @@ class CardListUseCase(
     }
 
     override fun onImageRequestError(message: String) {
-        outputs.forEach {  }
+        outputs.forEach { it.showError(message) }
     }
 
     private fun findCardPosition(targetCard: Card): Int = cardsList.lastIndexOf(targetCard)

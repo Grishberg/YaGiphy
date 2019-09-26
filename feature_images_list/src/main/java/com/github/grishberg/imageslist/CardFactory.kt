@@ -1,7 +1,5 @@
 package com.github.grishberg.imageslist
 
-import com.github.grishberg.core.Card
-
 /**
  * Creates Card instances.
  */

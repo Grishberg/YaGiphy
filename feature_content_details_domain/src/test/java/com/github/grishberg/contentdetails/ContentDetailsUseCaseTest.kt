@@ -2,6 +2,10 @@ package com.github.grishberg.contentdetails
 
 import com.github.grishberg.contentdetails.exceptions.ContentDetailsInputException
 import com.github.grishberg.core.*
+import com.github.grishberg.imageslist.Card
+import com.github.grishberg.imageslist.CardImageGateway
+import com.github.grishberg.imageslist.CardInfo
+import com.github.grishberg.imageslist.ImageHolder
 import com.nhaarman.mockitokotlin2.*
 import org.junit.Test
 

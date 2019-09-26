@@ -1,7 +1,7 @@
 package com.github.grishberg.imageslistpresentation.rv
 
 import androidx.recyclerview.widget.DiffUtil
-import com.github.grishberg.core.Card
+import com.github.grishberg.imageslist.Card
 
 class DiffUtilCallback(
     private val oldItems: List<Card>,

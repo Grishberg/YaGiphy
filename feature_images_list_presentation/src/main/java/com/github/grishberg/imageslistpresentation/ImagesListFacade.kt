@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.github.grishberg.core.Card
+import com.github.grishberg.imageslist.Card
 import com.github.grishberg.imageslist.CardsList
 import com.github.grishberg.imageslistpresentation.rv.CardItemDecoration
 import com.github.grishberg.imageslistpresentation.rv.CardsAdapter
@@ -35,7 +35,7 @@ class ImagesListFacade(
             .of(activity, ViewModelFactory(cardsList))
             .get(ImagesListViewModel::class.java)
 
-        val adapter = CardsAdapter(LayoutInflater.from(activity))
+        val adapter = CardsAdapter(LayoutInflater.from(activity), cardsList)
 
         val lm = GridLayoutManager(activity, COLUMNS_COUNT)
         val rv = createRecyclerView(activity, adapter, lm)

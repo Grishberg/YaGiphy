@@ -6,8 +6,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.github.grishberg.contentderailspresentation.R
-import com.github.grishberg.core.CardInfoRenderer
-import com.github.grishberg.core.ImageHolder
+import com.github.grishberg.imageslist.CardInfoRenderer
+import com.github.grishberg.imageslist.ImageHolder
 
 class GiphyContentRenderer(
     context: Context,

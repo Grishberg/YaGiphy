@@ -4,13 +4,14 @@ import android.view.View
 import android.view.animation.AlphaAnimation
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
-import com.github.grishberg.core.CardRenderer
-import com.github.grishberg.core.ImageHolder
+import com.github.grishberg.imageslist.CardRenderer
+import com.github.grishberg.imageslist.ImageHolder
 import com.github.grishberg.imageslistpresentation.R
 
 private const val FADE_DURATION = 1000
 
-internal class CardViewHolder(rootView: View) : RecyclerView.ViewHolder(rootView), CardRenderer {
+internal class CardViewHolder(rootView: View) : RecyclerView.ViewHolder(rootView),
+    CardRenderer {
     val image = rootView.findViewById<ImageView>(R.id.cardImage)
 
     override fun showDefaultBackground() {

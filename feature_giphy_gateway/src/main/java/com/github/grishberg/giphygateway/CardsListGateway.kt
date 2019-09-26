@@ -1,6 +1,6 @@
 package com.github.grishberg.giphygateway
 
-import com.github.grishberg.core.Card
+import com.github.grishberg.imageslist.Card
 import com.github.grishberg.core.CoroutineDispatchers
 import com.github.grishberg.giphygateway.api.GiphyApi
 import com.github.grishberg.imageslist.CardFactory
@@ -14,10 +14,6 @@ class CardsListGateway(
     private val coroutineContextProvider: CoroutineDispatchers,
     private val giphyApi: GiphyApi
 ) : CardsListInput {
-
-    fun setCardFactory(cardFactory: CardFactory) {
-        giphyApi.cardFactory = cardFactory
-    }
 
     override suspend fun requestTopCards(offset: Int): List<Card> {
         try {

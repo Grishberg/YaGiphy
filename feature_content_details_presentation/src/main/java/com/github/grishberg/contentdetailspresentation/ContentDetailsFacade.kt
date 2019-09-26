@@ -13,8 +13,8 @@ import androidx.lifecycle.ViewModelProviders
 import com.github.grishberg.contentderailspresentation.R
 import com.github.grishberg.contentdetails.ContentDetails
 import com.github.grishberg.contentdetails.TwitterHashTag
-import com.github.grishberg.core.CardInfo
-import com.github.grishberg.core.ImageHolder
+import com.github.grishberg.imageslist.CardInfo
+import com.github.grishberg.imageslist.ImageHolder
 import com.google.android.material.snackbar.Snackbar
 
 /**

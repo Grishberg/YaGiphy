@@ -4,7 +4,7 @@ import android.os.Parcelable
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.github.grishberg.core.Card
+import com.github.grishberg.imageslist.Card
 import com.github.grishberg.core.SingleLiveEvent
 import com.github.grishberg.imageslist.CardsList
 import com.github.grishberg.imageslist.CardsListOutput

@@ -1,14 +1,18 @@
 package com.github.grishberg.imageslist
 
-import com.github.grishberg.core.Card
-import com.github.grishberg.core.ImageHolder
-
 typealias CardSelectedAction = (Card) -> Unit
 
 interface CardsList {
+    /**
+     * Is called when need to refresh top cards page.
+     */
     fun requestCardsFirstPage()
-    fun onCardSelected(selectedCard: Card)
-    fun requestImageByCard(shownCard: Card): ImageHolder
+
+    /**
+     * Is called when user selected card.
+     */
+    fun onCardSelected(selectedPosition: Int)
+
     /**
      * Is called when card list scrolled.
      */

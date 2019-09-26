@@ -1,7 +1,7 @@
 package com.github.grishberg.giphygateway.api
 
 import androidx.annotation.WorkerThread
-import com.github.grishberg.core.Card
+import com.github.grishberg.imageslist.Card
 import com.github.grishberg.imageslist.CardFactory
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -17,10 +17,10 @@ private const val LIMIT = 20
 @WorkerThread
 class GiphyApi(
     private val apiKey: String,
-    private val client: OkHttpClient,
-    internal var cardFactory: CardFactory = CardFactory.STUB
+    private val cardFactory: CardFactory,
+    private val client: OkHttpClient
 ) {
-    constructor(apiKey: String) : this(apiKey, OkHttpClient())
+    constructor(apiKey: String, cardFactory: CardFactory) : this(apiKey, cardFactory, OkHttpClient())
 
     private val gson: Gson
 

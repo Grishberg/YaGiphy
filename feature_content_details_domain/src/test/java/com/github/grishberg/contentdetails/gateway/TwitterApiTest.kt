@@ -36,7 +36,7 @@ class TwitterApiTest {
 
         val hashTag = underTest.requestValidTwitterHandle(TEST_NAME)
 
-        assertEquals(TwitterHashTag.EMPTY_HASHTAG, hashTag)
+        assertEquals(TwitterHashTag.EMPTY, hashTag)
     }
 
     @Test
@@ -45,7 +45,7 @@ class TwitterApiTest {
 
         val hashTag = underTest.requestValidTwitterHandle(TEST_NAME)
 
-        assertEquals(TwitterHashTag.EMPTY_HASHTAG, hashTag)
+        assertEquals(TwitterHashTag.EMPTY, hashTag)
     }
 
     private fun createResponse(body: String, code: Int = 200): Response =

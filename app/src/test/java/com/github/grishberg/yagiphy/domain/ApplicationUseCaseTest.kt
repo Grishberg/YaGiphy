@@ -1,7 +1,7 @@
 package com.github.grishberg.yagiphy.domain
 
 import com.github.grishberg.contentdetails.ContentDetails
-import com.github.grishberg.core.Card
+import com.github.grishberg.imageslist.Card
 import com.github.grishberg.imageslist.CardSelectedAction
 import com.github.grishberg.imageslist.CardsList
 import com.nhaarman.mockitokotlin2.*
