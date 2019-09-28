@@ -20,7 +20,7 @@ class GiphyApiTest {
 
     private val cardFactory = mock<CardFactory>()
 
-    private val underTest = GiphyApi("test", okHttpClient, cardFactory)
+    private val underTest = GiphyApi("test", cardFactory, okHttpClient)
 
     @Test(expected = ResponseNotSuccessException::class)
     fun `throw exception when code not 200`() {
